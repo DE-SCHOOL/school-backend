@@ -1,0 +1,105 @@
+const mongoose = require('mongoose');
+const validator = require('validator');
+
+const studentSchema = new mongoose.Schema({
+	name: {
+		type: String,
+		required: [true, 'Name must be provided'],
+	},
+	matricule: {
+		type: String,
+		unique: true,
+		required: [true, 'Students must have a matricule'],
+	},
+	specialty: {
+		type: mongoose.Types.ObjectId,
+		ref: 'specialty',
+		required: [true, 'Students must belong to a specialty'],
+	},
+	address: String,
+	gender: {
+		type: String,
+		required: true,
+		enum: {
+			values: ['female', 'male'],
+			message: 'Gender must either be female or male',
+		},
+	},
+	dob: {
+		type: Date,
+		required: [true, 'Student must have a date of birth'],
+		validate: [validator.isDate, 'Date must be yyyy/mm/dd'], //Check this after
+	},
+	pod: {
+		type: String,
+	},
+	email: {
+		type: String,
+		unique: true,
+		required: [true, 'student email address must be provided'],
+		validate: [validator.isEmail, 'Invalid student email address'],
+	},
+	tel: {
+		type: Number,
+		unique: true,
+		required: [true, 'Student must have a phone number'],
+		validate: {
+			validator: (val) => {
+				const isValid = `${val}`.startsWith('6') && `${val}`.length === 9;
+				return isValid;
+			},
+			message: 'Invalid Phone number for student',
+		},
+	},
+	parent_name: {
+		type: String,
+		required: [true, 'Parent name must be provided'],
+	},
+	parent_email: {
+		type: String,
+		required: [true, 'parent email address must be provided'],
+		validate: [validator.isEmail, 'Invalid parent email address'],
+	},
+	parent_tel: {
+		type: Number,
+		required: [true, 'Parent must have a phone number'],
+		validate: {
+			validator: (val) => {
+				const isValid = `${val}`.startsWith('6') && `${val}`.length === 9;
+				return isValid;
+			},
+			message: 'Invalid Phone number for parent',
+		},
+	},
+	level: {
+		type: Number,
+		required: [true, 'Student must be registering to a specific year'],
+		enum: {
+			values: [200, 300, 400],
+			message: 'level must be 200, 300, or 400',
+		},
+	},
+	entry_certificate: {
+		type: String,
+		required: [
+			true,
+			'A student must have an entry level certificate to show to be admitted',
+		],
+	},
+	picture: {
+		type: String,
+	},
+	createdAt: {
+		type: Date,
+		default: Date.now(),
+	},
+});
+
+studentSchema.pre(/^find/, function (next) {
+	this.populate('specialty', 'name');
+
+	next();
+});
+
+const Student = mongoose.model('student', studentSchema);
+module.exports = Student;
