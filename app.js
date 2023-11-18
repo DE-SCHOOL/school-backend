@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
 const ErrorApi = require('./utilities/ErrorApi');
 const errorHandler = require('./controllers/error/error.controller');
 
@@ -15,13 +17,31 @@ const app = express();
 //parse the body object to express
 app.use(express.json());
 
-app.use(cors());
-app.use((req, res, next) => {
-	// console.log(req.headers.origin, 1234);
-	res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+//parse the cookie through the cookie middleware
+app.use(cookieParser());
 
-	next();
-});
+//handle Access control origin
+app.use(
+	cors({
+		origin: process.env.CORS_ORIGIN,
+		credentials: true,
+		methods: 'POST,GET,PATCH,DELETE',
+		origin: 'http://localhost:3000',
+	})
+);
+
+// app.use((req, res, next) => {
+// 	// res.header('Access-Control-Allow-Credentials', true);
+// 	// res.header('Access-Control-Allow-Origin', req.headers.origin);
+// 	// res.header('Access-Control-Allow-Methods', 'POST,GET,PATCH,DELETE');
+// 	// res.header(
+// 	// 	'Access-Control-Allow-Headers',
+// 	// 	'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
+// 	// );
+// 	console.log(process.env.CORS_ORIGIN);
+// 	next();
+// });
+// app.use(cors());
 
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);

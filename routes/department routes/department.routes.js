@@ -5,10 +5,11 @@ const express = require('express');
 
 const router = express.Router();
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
 	.route('/')
+	.get(departmentController.getAllDepartments)
 	.post(
 		authController.restrictTo('admin', 'director'),
 		departmentController.createDepartment

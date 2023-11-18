@@ -12,3 +12,9 @@ exports.createDepartment = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 201, department);
 });
+
+exports.getAllDepartments = catchAsync(async (req, res, next) => {
+	const departments = await Department.find({});
+
+	sendResponse(res, 'success', 200, departments);
+});

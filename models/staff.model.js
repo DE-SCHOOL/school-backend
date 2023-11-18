@@ -7,11 +7,11 @@ const staffSchema = new mongoose.Schema({
 		type: String,
 		required: [true, 'Name must be provided'],
 	},
-	// department: {
-	// 	type: mongoose.Types.ObjectId,
-	// 	ref: 'Department',
-	// 	required: [true, 'A staff must belong to a department'],
-	// },
+	matricule: {
+		type: String,
+		unique: true,
+		required: [true, 'Students must have a matricule'],
+	},
 	email: {
 		type: String,
 		unique: true,
@@ -33,6 +33,23 @@ const staffSchema = new mongoose.Schema({
 			},
 			message: 'Passwords to not match, please verify',
 		},
+	},
+	department: {
+		type: mongoose.Types.ObjectId,
+		ref: 'department',
+		required: [true, 'A staff must belong to a department'],
+	},
+	dob: {
+		type: Date,
+		required: [true, 'Student must have a date of birth'],
+		validate: [validator.isDate, 'Date must be yyyy/mm/dd'], //Check this after
+	},
+	pob: {
+		type: String,
+	},
+	picture: {
+		type: String,
+		default: 'n/a',
 	},
 	tel: {
 		type: Number,
@@ -56,11 +73,6 @@ const staffSchema = new mongoose.Schema({
 		},
 	},
 	address: String,
-	dob: {
-		type: Date,
-		required: [true, 'Teacher must have a date of birth'],
-		validate: [validator.isDate, 'Invalid date provided, should be yyyy/mm/dd'],
-	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
@@ -74,6 +86,22 @@ const staffSchema = new mongoose.Schema({
 			message: 'A user must either be a lecturer, hod, admin or lecturer',
 		},
 	},
+	high_certificate: {
+		type: String,
+		required: [
+			true,
+			'A staff must have a highest certificate obtained to show.',
+		],
+	},
+	marital_status: {
+		type: String,
+		required: [true, 'Information must be provided'],
+		enum: {
+			values: ['married', 'not married', 'seperated', 'devorced'],
+			message:
+				"Marital status can either be 'married', 'not married', 'seperated' or 'devorced'.",
+		},
+	},
 });
 
 staffSchema.pre('save', async function (next) {
@@ -83,12 +111,12 @@ staffSchema.pre('save', async function (next) {
 		this.password = hash;
 		this.confirmPassword = undefined;
 	}
-
 	next();
 });
 
 staffSchema.pre(/^find/, function (next) {
 	this.select('-__v');
+	this.populate('department', 'name');
 
 	next();
 });

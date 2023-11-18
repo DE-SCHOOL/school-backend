@@ -15,6 +15,12 @@ exports.register = catchAsync(async (req, res, next) => {
 		gender,
 		address,
 		dob,
+		matricule,
+		department,
+		pob,
+		picture,
+		high_certificate,
+		marital_status,
 	} = req.body;
 	const staff = await Staff.create({
 		name,
@@ -26,12 +32,27 @@ exports.register = catchAsync(async (req, res, next) => {
 		address,
 		dob,
 		role,
+		matricule,
+		department,
+		pob,
+		picture,
+		high_certificate,
+		marital_status,
 	});
 
 	staff.password = undefined;
 
 	const id = `${staff._id}`;
 	const token = await createToken(id);
+
+	res.cookie('jwt', token, {
+		httpOnly: true,
+		expires: new Date(
+			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+		),
+		// secure: false,
+	});
+
 	staff._doc.token = token;
 
 	sendResponse(res, 'success', 201, staff);
@@ -39,6 +60,7 @@ exports.register = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
 	const { email, password } = req.body;
+	// console.log({ email, password });
 
 	if (!email || !password)
 		return next(new ErrorApi('Email or password missing', 400));
@@ -47,6 +69,9 @@ exports.login = catchAsync(async (req, res, next) => {
 	query.select('+password');
 
 	const staff = await query;
+
+	if (!staff) return next(new ErrorApi('User not found with this email', 403));
+	// console.log(staff);
 	const hashedPassword = staff.password;
 
 	const isCorrect = await staff.isPasswordCorrect(hashedPassword, password);
@@ -55,14 +80,27 @@ exports.login = catchAsync(async (req, res, next) => {
 
 	const token = await createToken(`${staff._id}`);
 
+	res.cookie('jwt', token, {
+		httpOnly: true,
+		expires: new Date(
+			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+		),
+		// secure: false,
+	});
+
+	// console.log(token, 'TOKEN TOKEN FIREFOX');
+
 	staff._doc.token = token;
 	sendResponse(res, 'success', 200, staff);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-	let token = req.headers;
-	token = token?.authorization?.split(' ')[1];
+	//IN PURE DEVELOPMENT
+	// let token = req.headers;
+	// token = token?.authorization?.split(' ')[1];
 
+	let token = req.cookies.jwt;
+	// console.log(req.cookies, 'JWT CHECKING', token, 'TOKEN FOXFIRE');
 	if (!token)
 		return next(
 			new ErrorApi('No token, please login to be an authorized user', 401)
