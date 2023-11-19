@@ -4,6 +4,7 @@ const staffController = require('./../../controllers/staff controllers/staff.con
 const router = express.Router();
 
 router.route('/login').post(authController.login);
+router.route('/logout').get(authController.logOut);
 
 router.use(authController.protect);
 router

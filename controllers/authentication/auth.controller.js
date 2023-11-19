@@ -134,5 +134,17 @@ exports.restrictTo = (...roles) => {
 		next();
 	};
 };
+
+exports.logOut = catchAsync(async (req, res, next) => {
+	res.cookie('jwt', '', {
+		httpOnly: true,
+		expires: new Date(
+			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+		),
+		// secure: false,
+	});
+
+	sendResponse(res, 'success', 200, [{ token: '' }]);
+});
 exports.forgetPassword = catchAsync(async (req, res, next) => {});
 exports.resetPassword = catchAsync(async (req, res, next) => {});
