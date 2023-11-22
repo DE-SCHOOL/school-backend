@@ -45,13 +45,13 @@ exports.register = catchAsync(async (req, res, next) => {
 	const id = `${staff._id}`;
 	const token = await createToken(id);
 
-	res.cookie('jwt', token, {
-		httpOnly: true,
-		expires: new Date(
-			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
-		),
-		// secure: false,
-	});
+	// res.cookie('jwt', token, {
+	// 	httpOnly: true,
+	// 	expires: new Date(
+	// 		Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+	// 	),
+	// 	// secure: false,
+	// });
 
 	staff._doc.token = token;
 
@@ -98,26 +98,31 @@ exports.protect = catchAsync(async (req, res, next) => {
 	//IN PURE DEVELOPMENT
 	// let token = req.headers;
 	// token = token?.authorization?.split(' ')[1];
-
+	console.log('Don"t know what to say', 1);
 	let token = req.cookies.jwt;
 	// console.log(req.cookies, 'JWT CHECKING', token, 'TOKEN FOXFIRE');
 	if (!token)
 		return next(
 			new ErrorApi('No token, please login to be an authorized user', 401)
 		);
-
+	console.log('Don"t know what to say', 2);
 	const tokenInfo = await verifyToken(token);
 
 	const userInfo = { ...tokenInfo };
 
+	console.log('Don"t know what to say', 3, userInfo.id);
 	const user = await Staff.findById(userInfo.id);
 
+	console.log('Don"t know what to say', 4);
 	if (!user)
 		return next(
 			new ErrorApi('Something went wrong. Please login to continue', 403)
 		);
 
+	console.log('Don"t know what to say', 5);
 	req.staff = user;
+	console.log('Don"t know what to say');
+
 	next();
 });
 

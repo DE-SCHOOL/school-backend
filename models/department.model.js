@@ -9,18 +9,24 @@ const departmentSchema = new mongoose.Schema({
 	},
 	hod: {
 		type: mongoose.Types.ObjectId,
-		ref: 'Staff',
+		ref: 'staff',
 		required: [true, 'Each department must have a HEAD (HOD)'],
 	},
 	program: {
 		type: mongoose.Types.ObjectId,
-		ref: 'Program',
+		ref: 'program',
 		required: [true, 'A department must belong to a school'],
 	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
 	},
+});
+
+departmentSchema.pre(/^find/, function (next) {
+	this.populate('hod', 'name').populate('program', 'name');
+
+	next();
 });
 
 const Department = mongoose.model('department', departmentSchema);

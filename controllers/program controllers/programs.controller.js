@@ -12,3 +12,9 @@ exports.createProgram = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 201, program);
 });
+
+exports.getPrograms = catchAsync(async (req, res, next) => {
+	const programs = await Program.find({});
+
+	sendResponse(res, 'success', 200, programs);
+});

@@ -9,6 +9,10 @@ router.use(authController.protect);
 
 router
 	.route('/')
+	.get(
+		authController.restrictTo('admin', 'director'),
+		programController.getPrograms
+	)
 	.post(authController.restrictTo('admin'), programController.createProgram);
 
 module.exports = router;

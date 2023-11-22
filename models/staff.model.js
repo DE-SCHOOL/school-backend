@@ -31,7 +31,7 @@ const staffSchema = new mongoose.Schema({
 			validator: function (val) {
 				return this.password === val;
 			},
-			message: 'Passwords to not match, please verify',
+			message: 'Passwords do not match, please verify',
 		},
 	},
 	department: {
