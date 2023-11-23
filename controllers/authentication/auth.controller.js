@@ -65,10 +65,13 @@ exports.login = catchAsync(async (req, res, next) => {
 	if (!email || !password)
 		return next(new ErrorApi('Email or password missing', 400));
 
+	console.log('Do not know what is wrong', 1);
 	const query = Staff.findOne({ email });
 	query.select('+password');
+	console.log('Do not know what is wrong', 2);
 
 	const staff = await query;
+	console.log('Do not know what is wrong', 3);
 
 	if (!staff) return next(new ErrorApi('User not found with this email', 403));
 	// console.log(staff);
@@ -111,7 +114,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 	const userInfo = { ...tokenInfo };
 
 	console.log('Don"t know what to say', 3, userInfo.id);
-	const user = await Staff.findById(userInfo.id);
+	const user = await Staff.findById(`${userInfo.id}`);
 
 	console.log('Don"t know what to say', 4);
 	if (!user)
