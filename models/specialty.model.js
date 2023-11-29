@@ -8,13 +8,19 @@ const specialtySchema = new mongoose.Schema({
 	},
 	department: {
 		type: mongoose.Types.ObjectId,
-		ref: 'Department',
+		ref: 'department',
 		required: [true, 'A specialty must belong to a department'],
 	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
 	},
+});
+
+specialtySchema.pre(/^find/, function (next) {
+	this.populate('department', 'name');
+
+	next();
 });
 
 const Specialty = mongoose.model('specialty', specialtySchema);

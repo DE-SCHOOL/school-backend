@@ -10,7 +10,7 @@ router.use(authController.protect);
 router
 	.route('/')
 	.get(
-		authController.restrictTo('admin', 'director'),
+		authController.restrictTo('admin', 'director', 'hod', 'lecturer', 'secreteriat'),
 		programController.getPrograms
 	)
 	.post(authController.restrictTo('admin'), programController.createProgram);

@@ -116,7 +116,8 @@ staffSchema.pre('save', async function (next) {
 
 staffSchema.pre(/^find/, function (next) {
 	this.select('-__v');
-	this.populate('department', 'name');
+	// this.populate('department', 'name');
+	// this.populate({ path: 'department' });
 
 	next();
 });

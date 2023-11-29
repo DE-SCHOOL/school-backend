@@ -66,11 +66,12 @@ exports.login = catchAsync(async (req, res, next) => {
 		return next(new ErrorApi('Email or password missing', 400));
 
 	console.log('Do not know what is wrong', 1);
-	const query = Staff.findOne({ email });
-	query.select('+password');
+	console.log(email);
+	const staff = await Staff.findOne({ email }).select('+password');
+	// query.select('+password');
 	console.log('Do not know what is wrong', 2);
 
-	const staff = await query;
+	// const staff = await query;
 	console.log('Do not know what is wrong', 3);
 
 	if (!staff) return next(new ErrorApi('User not found with this email', 403));
@@ -131,7 +132,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
 	return (req, res, next) => {
-		// console.log(req.staff);
+		// console.log(req.staff, 1111111111111111111111111);
 		const { role } = req.staff;
 		// console.log(role, roles);
 		if (!roles.includes(role)) {
