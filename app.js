@@ -11,6 +11,7 @@ const programRouter = require('./routes/program routes/program.routes');
 const departmentRouter = require('./routes/department routes/department.routes');
 const specialtyRouter = require('./routes/specialty routes/specialty.routes');
 const studentRouter = require('./routes/student routes/student.routes');
+const courseRouter = require('./routes/course routes/course.routes');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use('/api/v1/program', programRouter);
 app.use('/api/v1/department', departmentRouter);
 app.use('/api/v1/specialty', specialtyRouter);
 app.use('/api/v1/student', studentRouter);
+app.use('/api/v1/course', courseRouter);
 
 app.all('*', (req, res, next) => {
 	const statusCode = 404;
