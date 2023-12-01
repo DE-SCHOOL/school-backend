@@ -53,5 +53,11 @@ const courseSchema = new mongoose.Schema({
 	},
 });
 
+courseSchema.pre(/^find/, function (next) {
+	this.populate('specialty');
+
+	next();
+});
+
 const Course = mongoose.model('course', courseSchema);
 module.exports = Course;

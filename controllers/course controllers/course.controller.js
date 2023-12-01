@@ -4,15 +4,17 @@ const sendResponse = require('./../../utilities/sendResponse');
 const catchAsync = require('./../../utilities/catchAsync');
 
 exports.createCourse = catchAsync(async (req, res, next) => {
-	const {
-		name,
-		specialty,
-		code,
-		semester,
-		levels,
-		credit_value,
-		status,
-	} = req.body;
+	const { name, specialty, code, semester, levels, credit_value, status } =
+		req.body;
+
+	if (!specialty || specialty?.length === 0)
+		return next(
+			new ErrorApi('A course must be assigned to atleast a specialty', 400)
+		);
+	if (!levels || levels?.length === 0)
+		return next(
+			new ErrorApi('A course must be assigned to atleast a level', 400)
+		);
 
 	const courses = await Course.create({
 		name,
