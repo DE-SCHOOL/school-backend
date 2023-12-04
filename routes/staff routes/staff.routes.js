@@ -29,4 +29,6 @@ router
 		staffController.getAllStaffs
 	);
 
+// router.route('/:courseID')
+
 module.exports = router;

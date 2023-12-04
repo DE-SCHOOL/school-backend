@@ -1,5 +1,6 @@
 const sendResponse = require('../../utilities/sendResponse');
 const Specialty = require('./../../models/specialty.model');
+const Course = require('./../../models/courses.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const catchAsync = require('./../../utilities/catchAsync');
 
@@ -15,6 +16,15 @@ exports.createSpecialty = catchAsync(async (req, res, next) => {
 
 exports.getAllSpecialties = catchAsync(async (req, res, next) => {
 	const specialties = await Specialty.find({});
+
+	sendResponse(res, 'success', 200, specialties);
+});
+
+exports.getSpecialtyCoursesInfo = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+	let specialties = await Course.find({ _id: id });
+
+	if (!specialties) specialties = [];
 
 	sendResponse(res, 'success', 200, specialties);
 });

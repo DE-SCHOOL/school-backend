@@ -18,4 +18,6 @@ router
 		courseController.getAllCourses
 	);
 
+router.route('/specialty/:id').get(courseController.getCoursesPerSpecialty);
+
 module.exports = router;

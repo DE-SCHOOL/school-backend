@@ -15,4 +15,6 @@ router
 	)
 	.get(specialtyController.getAllSpecialties);
 
+// router.route('/:id').get(specialtyController.getSpecialtyCoursesInfo);
+
 module.exports = router;

@@ -34,3 +34,12 @@ exports.getAllCourses = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, courses);
 });
+
+exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+	let courses = await Course.find({ specialty: [`${id}`] });
+
+	if (!courses) courses = [];
+
+	sendResponse(res, 'success', 200, courses);
+});

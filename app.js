@@ -12,6 +12,7 @@ const departmentRouter = require('./routes/department routes/department.routes')
 const specialtyRouter = require('./routes/specialty routes/specialty.routes');
 const studentRouter = require('./routes/student routes/student.routes');
 const courseRouter = require('./routes/course routes/course.routes');
+const staffCourseRouter = require('./routes/staff_course routes/staff_course.routes');
 
 const app = express();
 
@@ -31,25 +32,13 @@ app.use(
 	})
 );
 
-// app.use((req, res, next) => {
-// 	// res.header('Access-Control-Allow-Credentials', true);
-// 	// res.header('Access-Control-Allow-Origin', req.headers.origin);
-// 	// res.header('Access-Control-Allow-Methods', 'POST,GET,PATCH,DELETE');
-// 	// res.header(
-// 	// 	'Access-Control-Allow-Headers',
-// 	// 	'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
-// 	// );
-// 	console.log(process.env.CORS_ORIGIN);
-// 	next();
-// });
-// app.use(cors());
-
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);
 app.use('/api/v1/department', departmentRouter);
 app.use('/api/v1/specialty', specialtyRouter);
 app.use('/api/v1/student', studentRouter);
 app.use('/api/v1/course', courseRouter);
+app.use('/api/v1/staff-course', staffCourseRouter);
 
 app.all('*', (req, res, next) => {
 	const statusCode = 404;
