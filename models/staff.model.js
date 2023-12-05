@@ -34,11 +34,6 @@ const staffSchema = new mongoose.Schema({
 			message: 'Passwords do not match, please verify',
 		},
 	},
-	department: {
-		type: mongoose.Types.ObjectId,
-		ref: 'department',
-		required: [true, 'A staff must belong to a department'],
-	},
 	dob: {
 		type: Date,
 		required: [true, 'Student must have a date of birth'],
