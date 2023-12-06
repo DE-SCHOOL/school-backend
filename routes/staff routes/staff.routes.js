@@ -3,11 +3,32 @@ const authController = require('./../../controllers/authentication/auth.controll
 const staffController = require('./../../controllers/staff controllers/staff.controller');
 const router = express.Router();
 
-// router.use(authController.protect);
-
-router.route('/register').post(authController.register);
 router.route('/login').post(authController.login);
+router.route('/logout').get(authController.logOut);
 
-router.route('/').get(staffController.getAllStaffs);
+router.use(authController.protect);
+router
+	.route('/register')
+	.post(
+		authController.restrictTo('admin', 'director', 'hod'),
+		authController.register
+	);
+
+// router.use(authController.restrictTo('hod', 'admin', 'director', 'lecturer', 'secreteriat'));
+
+router
+	.route('/')
+	.get(
+		authController.restrictTo(
+			'hod',
+			'admin',
+			'director',
+			'lecturer',
+			'secreteriat'
+		),
+		staffController.getAllStaffs
+	);
+
+// router.route('/:courseID')
 
 module.exports = router;

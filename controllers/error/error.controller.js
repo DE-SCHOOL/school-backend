@@ -15,6 +15,7 @@ const sendErrorProd = (err, code, res) => {
 		});
 	} else {
 		err.message = 'Something went very wrong';
+
 		res.status(code).json({
 			status: err.status || 'Error',
 			message: err.message,
@@ -30,14 +31,18 @@ module.exports = (err, req, res, next) => {
 		sendErrorDev(err, statusCode, res);
 	} else if (process.env.NODE_ENV === 'production') {
 		const error = { ...err };
-		if (err.code === 11000){
-			error.message = 'Duplicate value, please try with different information';
-
-		} error.isOperational = true;
+		error.message = 'Something went very wrong';
+		error.isOperational = true;
+		if (err.code === 11000) {
+			const msg = err.message.split(':');
+			error.message = `Duplicate value, for ${msg[4].replace('}', '')}`;
+		}
 		if (err.name === 'TokenExpiredError') {
-			error.isOperational = true;
 			error.message =
 				'Login expired! Login to refresh you authentication session';
+		}
+		if (err.name === 'ValidationError') {
+			error.message = err.message.split(':')[2];
 		}
 
 		sendErrorProd(error, statusCode, res);

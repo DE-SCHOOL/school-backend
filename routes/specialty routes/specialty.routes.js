@@ -5,7 +5,7 @@ const express = require('express');
 
 const router = express.Router();
 
-// router.use(authController.protect);
+router.use(authController.protect);
 
 router
 	.route('/')
@@ -14,5 +14,7 @@ router
 		specialtyController.createSpecialty
 	)
 	.get(specialtyController.getAllSpecialties);
+
+// router.route('/:id').get(specialtyController.getSpecialtyCoursesInfo);
 
 module.exports = router;

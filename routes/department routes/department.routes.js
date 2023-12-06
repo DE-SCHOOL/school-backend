@@ -9,6 +9,7 @@ router.use(authController.protect);
 
 router
 	.route('/')
+	.get(departmentController.getAllDepartments)
 	.post(
 		authController.restrictTo('admin', 'director'),
 		departmentController.createDepartment

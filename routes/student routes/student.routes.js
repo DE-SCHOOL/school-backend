@@ -5,13 +5,17 @@ const express = require('express');
 
 const router = express.Router();
 
-// router.use(authController.protect);
+router.use(authController.protect);
+
+// router.use(
+// 	authController.restrictTo('admin', 'director', 'hod', 'secreteriat')
+// );
 
 router
 	.route('/')
 	.get(studentController.getAllStudents)
 	.post(
-		// authController.restrictTo('admin', 'director', 'hod', 'secreteriat'),
+		authController.restrictTo('admin', 'director', 'hod', 'secreteriat'),
 		studentController.createStudent
 	);
 
