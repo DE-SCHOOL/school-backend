@@ -89,7 +89,7 @@ exports.login = catchAsync(async (req, res, next) => {
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
 		secure: true,
-		sameSite: 'None',
+		// sameSite: 'None',
 		domain: 'https://school-frontend-alpha.vercel.app',
 	});
 
@@ -105,7 +105,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 	// let token = req.headers;
 	// token = token?.authorization?.split(' ')[1];
 	console.log('Don"t know what to say', 1);
-	console.log(req.cookies.jwt, 11111111111, 'JWT');
+	console.log(req.cookies, 'COOKIES', req.cookies.jwt, 11111111111, 'JWT');
 	let token = req.cookies.jwt;
 	// console.log(req.cookies, 'JWT CHECKING', token, 'TOKEN FOXFIRE');
 	if (!token)
