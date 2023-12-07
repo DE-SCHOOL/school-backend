@@ -90,7 +90,7 @@ exports.login = catchAsync(async (req, res, next) => {
 		),
 		secure: true,
 		// sameSite: 'None',
-		domain: 'vercel.app',
+		domain: 'https://vercel.app',
 	});
 
 	console.log('SETTING COOKIE', 2);
