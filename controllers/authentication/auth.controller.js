@@ -82,14 +82,17 @@ exports.login = catchAsync(async (req, res, next) => {
 
 	const token = await createToken(`${staff._id}`);
 
+	console.log('SETTING COOKIE', 1);
 	res.cookie('jwt', token, {
 		httpOnly: true,
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
 		secure: true,
+		domain: 'https://school-frontend-alpha.vercel.app',
 	});
 
+	console.log('SETTING COOKIE', 2);
 	// console.log(token, 'TOKEN TOKEN FIREFOX');
 
 	staff._doc.token = token;
