@@ -32,7 +32,7 @@ app.use(
 		origin: process.env.CORS_ORIGIN,
 	})
 );
-console.log(process.env.NODE_ENV);
+// console.log(process.env.NODE_ENV);
 
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);
