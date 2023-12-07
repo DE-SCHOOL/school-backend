@@ -1,7 +1,7 @@
 FROM node:latest
 WORKDIR /app
-COPY package.json .
+COPY package.json ./
 RUN npm install 
 COPY . ./
 EXPOSE 8000
-CMD ["npm", "run", "start:production"]
+CMD ["npm", "run", "start:prod"]
