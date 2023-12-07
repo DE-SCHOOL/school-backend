@@ -89,6 +89,7 @@ exports.login = catchAsync(async (req, res, next) => {
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
 		secure: true,
+		sameSite: 'None',
 		domain: 'https://school-frontend-alpha.vercel.app',
 	});
 
