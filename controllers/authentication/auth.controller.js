@@ -90,7 +90,7 @@ exports.login = catchAsync(async (req, res, next) => {
 		),
 		secure: true,
 		// sameSite: 'None',
-		domain: 'https://school-frontend-alpha.vercel.app',
+		domain: 'vercel.app',
 	});
 
 	console.log('SETTING COOKIE', 2);
