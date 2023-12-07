@@ -29,6 +29,7 @@ app.use(
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
 		// origin: 'http://localhost:3000',
+		origin: process.env.CORS_ORIGIN,
 	})
 );
 
