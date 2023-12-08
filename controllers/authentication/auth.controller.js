@@ -90,7 +90,7 @@ exports.login = catchAsync(async (req, res, next) => {
 			expires: new Date(
 				Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 			),
-			domain: 'vercel.app',
+			domain: 'vercel.com',
 			secure: true,
 		};
 	} else {
@@ -157,13 +157,13 @@ exports.restrictTo = (...roles) => {
 };
 
 exports.logOut = catchAsync(async (req, res, next) => {
-	res.cookie('jwt', '', {
+	res.cookie('jwt', 'production', {
 		httpOnly: true,
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
-		domain: 'vercel.app',
-		// secure: false,
+		domain: 'vercel.com',
+		secure: true,
 	});
 
 	sendResponse(res, 'success', 200, [{ token: '' }]);
