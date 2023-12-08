@@ -103,6 +103,7 @@ exports.login = catchAsync(async (req, res, next) => {
 			secure: false,
 		};
 	}
+	console.log(cookieOption);
 	res.cookie('jwt', token, cookieOption);
 
 	staff._doc.token = token;
@@ -164,6 +165,7 @@ exports.logOut = catchAsync(async (req, res, next) => {
 		),
 		domain: 'vercel.com',
 		secure: true,
+		sameSite: 'None',
 	});
 
 	sendResponse(res, 'success', 200, [{ token: '' }]);
