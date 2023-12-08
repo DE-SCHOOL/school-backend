@@ -19,20 +19,18 @@ const app = express();
 //parse the body object to express
 app.use(express.json());
 
-//parse the cookie through the cookie middleware
-app.use(cookieParser());
-
 //handle Access control origin
 app.use(
 	cors({
-		origin: process.env.CORS_ORIGIN,
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
 		// origin: 'http://localhost:3000',
-		origin: process.env.CORS_ORIGIN,
+		origin: 'https://school-frontend-alpha.vercel.app',
 	})
 );
-// console.log(process.env.NODE_ENV);
+
+//parse the cookie through the cookie middleware
+app.use(cookieParser());
 
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);
