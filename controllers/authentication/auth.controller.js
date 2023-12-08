@@ -90,8 +90,9 @@ exports.login = catchAsync(async (req, res, next) => {
 			expires: new Date(
 				Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 			),
-			domain: 'vercel.com',
+			domain: 'vercel.app',
 			secure: true,
+			sameSite: 'None',
 		};
 	} else {
 		cookieOption = {
