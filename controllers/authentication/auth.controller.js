@@ -163,9 +163,9 @@ exports.logOut = catchAsync(async (req, res, next) => {
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
-		domain: 'vercel.com',
+		// domain: 'vercel.com',
 		secure: true,
-		sameSite: 'None',
+		// sameSite: 'None',
 	});
 
 	sendResponse(res, 'success', 200, [{ token: '' }]);
