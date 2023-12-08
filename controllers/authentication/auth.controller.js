@@ -162,7 +162,7 @@ exports.logOut = catchAsync(async (req, res, next) => {
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
-		// domain: 'localhost',
+		domain: 'vercel.app',
 		// secure: false,
 	});
 
