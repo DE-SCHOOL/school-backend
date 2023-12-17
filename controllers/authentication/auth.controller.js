@@ -90,8 +90,8 @@ exports.login = catchAsync(async (req, res, next) => {
 			expires: new Date(
 				Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 			),
-			domain: '.vercel.app',
-			secure: true,
+			// domain: '.vercel.app',
+			// secure: true,
 		};
 	} else {
 		cookieOption = {
@@ -99,8 +99,8 @@ exports.login = catchAsync(async (req, res, next) => {
 			expires: new Date(
 				Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 			),
-			domain: 'localhost',
-			secure: false,
+			// domain: 'localhost',
+			// secure: false,
 		};
 	}
 	console.log(cookieOption);
@@ -163,8 +163,8 @@ exports.logOut = catchAsync(async (req, res, next) => {
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
 		),
-		domain: '.vercel.com',
-		secure: true,
+		// domain: '.vercel.com',
+		// secure: true,
 		// sameSite: 'None',
 	});
 
