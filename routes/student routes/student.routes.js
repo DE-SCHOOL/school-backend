@@ -1,5 +1,6 @@
 const authController = require('./../../controllers/authentication/auth.controller');
 const studentController = require('./../../controllers/student controllers/student.controller');
+const RIGHT = require('./../../utilities/restrict');
 
 const express = require('express');
 
@@ -19,4 +20,5 @@ router
 		studentController.createStudent
 	);
 
+router.get('/:staffID/students', authController.restrictTo(...RIGHT.TO_ALL_STAFF), studentController.getStudentsPerStaff);
 module.exports = router;

@@ -20,3 +20,13 @@ exports.getStaffCourse = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, staffCourses);
 });
+
+exports.getMyCourses = catchAsync(async (req, res, next) => {
+	const staff = req.params.teacherID;
+	const course = await StaffCourse.find({ staff });
+
+	const courses = course[0].courses;
+	// +semester +credit_value +status
+	console.log(courses);
+	sendResponse(res, 'success', 200, courses);
+});

@@ -10,12 +10,18 @@ router.use(authController.protect);
 router
 	.route('/')
 	.get(
-		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
 		staffCourseController.getStaffCourse
 	)
 	.post(
-		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
 		staffCourseController.assignStaffCourse
 	);
 
+router
+	.route('/:teacherID')
+	.get(
+		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+		staffCourseController.getMyCourses
+	);
 module.exports = router;

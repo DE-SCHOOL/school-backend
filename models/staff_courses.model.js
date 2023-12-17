@@ -12,6 +12,7 @@ const staffCourseSchema = new mongoose.Schema({
 		type: mongoose.Types.ObjectId,
 		ref: 'staff',
 		required: [true, 'A course is assigned to atleast a staff'],
+		unique: true,
 	},
 	createdAt: {
 		type: Date,
@@ -20,7 +21,10 @@ const staffCourseSchema = new mongoose.Schema({
 });
 
 staffCourseSchema.pre(/^find/, function (next) {
-	this.populate({ path: 'courses', select: 'name levels' }).populate({
+	this.populate({
+		path: 'courses',
+		select: 'name levels code credit_value semester status',
+	}).populate({
 		path: 'staff',
 		select: 'name',
 	});
