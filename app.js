@@ -24,7 +24,7 @@ app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'http://44.212.2.161:3000',
+		origin: 'http://44.202.4.206:3000',
 		// origin: 'https://school-frontend-alpha.vercel.app',
 		optionsSuccessStatus: 204,
 	})
