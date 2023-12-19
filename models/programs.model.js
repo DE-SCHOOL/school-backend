@@ -12,12 +12,12 @@ const programSchema = new mongoose.Schema({
 	},
 	director: {
 		type: mongoose.Types.ObjectId,
-		ref: 'Staff',
+		ref: 'staff',
 		required: [true, 'A director must be the head of a program'],
 	},
 	deputyDirector: {
 		type: mongoose.Types.ObjectId,
-		ref: 'Staff',
+		ref: 'staff',
 		required: [true, 'A program must have an assitant director'],
 	},
 	logo: {
@@ -31,5 +31,10 @@ const programSchema = new mongoose.Schema({
 	},
 });
 
+programSchema.pre(/^find/, function (next) {
+	this.populate('director deputyDirector', 'name');
+
+	next();
+});
 const Program = mongoose.model('program', programSchema);
 module.exports = Program;
