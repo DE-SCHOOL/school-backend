@@ -54,5 +54,11 @@ const markSchema = new mongoose.Schema({
 	},
 });
 
+markSchema.pre('find', function (next) {
+	this.populate('course', 'name code').populate('student', 'name matricule');
+
+	next();
+});
+
 const Mark = mongoose.model('mark', markSchema);
 module.exports = Mark;

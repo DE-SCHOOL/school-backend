@@ -63,14 +63,8 @@ exports.login = catchAsync(async (req, res, next) => {
 	if (!email || !password)
 		return next(new ErrorApi('Email or password missing', 400));
 
-	console.log('Do not know what is wrong', 1);
 	console.log(email);
 	const staff = await Staff.findOne({ email }).select('+password');
-	// query.select('+password');
-	console.log('Do not know what is wrong', 2);
-
-	// const staff = await query;
-	console.log('Do not know what is wrong', 3);
 
 	if (!staff) return next(new ErrorApi('User not found with this email', 403));
 	// console.log(staff);
@@ -114,31 +108,25 @@ exports.protect = catchAsync(async (req, res, next) => {
 	//IN PURE DEVELOPMENT
 	// let token = req.headers;
 	// token = token?.authorization?.split(' ')[1];
-	console.log('Don"t know what to say', 1);
-	console.log(req.cookies, 'COOKIES', req.cookies.jwt, 11111111111, 'JWT');
 	let token = req.cookies.jwt;
 	// console.log(req.cookies, 'JWT CHECKING', token, 'TOKEN FOXFIRE');
 	if (!token)
 		return next(
 			new ErrorApi('No token, please login to be an authorized user', 401)
 		);
-	console.log('Don"t know what to say', 2);
+
 	const tokenInfo = await verifyToken(token);
 
 	const userInfo = { ...tokenInfo };
 
-	console.log('Don"t know what to say', 3, userInfo.id);
 	const user = await Staff.findById(`${userInfo.id}`);
 
-	console.log('Don"t know what to say', 4);
 	if (!user)
 		return next(
 			new ErrorApi('Something went wrong. Please login to continue', 403)
 		);
 
-	console.log('Don"t know what to say', 5);
 	req.staff = user;
-	console.log('Don"t know what to say');
 
 	next();
 });
@@ -158,7 +146,7 @@ exports.restrictTo = (...roles) => {
 };
 
 exports.logOut = catchAsync(async (req, res, next) => {
-	res.cookie('jwt', 'production', {
+	res.cookie('jwt', 'loged-out', {
 		httpOnly: true,
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
