@@ -9,7 +9,6 @@ const markSchema = new mongoose.Schema({
 	student: {
 		type: mongoose.Types.ObjectId,
 		ref: 'student',
-		unique: true,
 		required: [true, 'Marks must belong to a specific course'],
 	},
 	s1CA: {
@@ -54,7 +53,13 @@ const markSchema = new mongoose.Schema({
 	},
 });
 
-markSchema.pre('find', function (next) {
+//Setting student as an index without using unique:true in modelSchema definition
+// markSchema.index({student: 1}) 1 for ascending order and -1 for descending order
+
+//Setting a composite key combination of student and course ids
+markSchema.index({ course: 1, student: 1 }, { unique: true });
+
+markSchema.pre(/^find/, function (next) {
 	this.populate('course', 'name code').populate('student', 'name matricule');
 
 	next();
