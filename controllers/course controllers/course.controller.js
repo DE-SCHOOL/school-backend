@@ -35,6 +35,13 @@ exports.getAllCourses = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, courses);
 });
 
+exports.getCourse = catchAsync(async (req, res, next) => {
+	const ID = req.params.id;
+	const course = await Course.findById(ID);
+
+	sendResponse(res, 'success', 200, course);
+});
+
 exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
 	let courses = await Course.find({ specialty: [`${id}`] });
