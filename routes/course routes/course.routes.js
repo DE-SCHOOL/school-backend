@@ -17,6 +17,12 @@ router
 		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
 		courseController.getAllCourses
 	);
+router
+	.route('/:id')
+	.get(
+		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+		courseController.getCourse
+	);
 
 router.route('/specialty/:id').get(courseController.getCoursesPerSpecialty);
 
