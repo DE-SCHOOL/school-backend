@@ -16,17 +16,53 @@ exports.assignStaffCourse = catchAsync(async (req, res, next) => {
 });
 
 exports.getStaffCourse = catchAsync(async (req, res, next) => {
-	const staffCourses = await StaffCourse.find({});
+	const assignedCourses = await StaffCourse.find({});
 
-	sendResponse(res, 'success', 200, staffCourses);
+	const trial = { ...assignedCourses };
+
+	let staffCourses = [];
+
+	//Get all staff IDs as an array
+	let staffsID = [];
+	assignedCourses.map((course) => {
+		if (!staffsID.includes(`${course.staff._id}`)) {
+			staffsID.push(`${course.staff._id}`);
+		}
+	});
+
+	//Group the courses per availaible staffs (staffsID)
+	let coursesGroup = [];
+	staffsID.map((id) => {
+		let assigned = assignedCourses.filter(
+			(course) => `${course.staff._id}` === id
+		);
+
+		//mutate courses, not really clear
+		let courses;
+		assigned.map((course, index) => {
+			if (index > 0) {
+				courses.push(...course.courses);
+			} else {
+				courses = course.courses; //Mutating courses seems to be what is happening here
+			}
+		});
+
+		//overwrite first object
+		let CoursesPerTeacher = assigned[0];
+		coursesGroup.push(CoursesPerTeacher);
+	});
+
+	sendResponse(res, 'success', 200, coursesGroup);
 });
 
 exports.getMyCourses = catchAsync(async (req, res, next) => {
 	const staff = req.params.teacherID;
-	const course = await StaffCourse.find({ staff });
+	const teacherCourses = await StaffCourse.find({ staff });
 
-	const courses = course[0].courses;
+	const courses = [];
 	// +semester +credit_value +status
-	console.log(courses);
+	teacherCourses.map((course) => {
+		courses.push(...course.courses);
+	});
 	sendResponse(res, 'success', 200, courses);
 });
