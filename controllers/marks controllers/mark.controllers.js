@@ -6,6 +6,7 @@ const catchAsync = require('./../../utilities/catchAsync');
 exports.createStudentsMark = catchAsync(async (req, res, next) => {
 	const { courseID } = req.params;
 	const { students, academicYear } = req.body;
+	console.log(students, 111111);
 	let studentsMark = [];
 	for (let i = 0; i < students.length; i++) {
 		studentsMark[i] = await Mark.create({
@@ -17,11 +18,24 @@ exports.createStudentsMark = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 201, studentsMark);
 });
 
-exports.getAllStudentsMarksPerCourse = catchAsync(async (req, res, next) => {
+exports.getAllStudentsMarkSheet = catchAsync(async (req, res, next) => {
 	const allStudentsMark = await Mark.find({});
 
 	sendResponse(res, 'success', 200, allStudentsMark);
 });
+
+exports.getMarkSheetsPerCoursePerStudents = catchAsync(
+	async (req, res, next) => {
+		const course = req.params.courseID;
+		const { students } = req.body;
+		const studentsMarksheet = await Mark.find({
+			course,
+			student: { $in: students },
+		});
+
+		sendResponse(res, 'success', 200, studentsMarksheet);
+	}
+);
 
 exports.updateStudentsMark = catchAsync(async (req, res, next) => {
 	// const markType = ['s1CA', 's1Exam', 's2CA', 's2Exam', 'preMock', 'mock']; possible values for markType
