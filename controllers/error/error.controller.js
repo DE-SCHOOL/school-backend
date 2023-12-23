@@ -44,7 +44,7 @@ module.exports = (err, req, res, next) => {
 		if (err.name === 'ValidationError') {
 			error.message = err.message.split(':')[2];
 		}
-
+		
 		sendErrorProd(error, statusCode, res);
 	}
 };
