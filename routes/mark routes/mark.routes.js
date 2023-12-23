@@ -15,8 +15,14 @@ router
 	)
 	.get(
 		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
-		marksController.getAllStudentsMarksPerCourse
+		marksController.getAllStudentsMarkSheet
 	);
+
+router.route('/course/:courseID/students').post(
+	//using post for getting data because request needs data from the request body
+	authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+	marksController.getMarkSheetsPerCoursePerStudents
+);
 
 // const markType = ['s1CA', 's1Exam', 's2CA', 's2Exam', 'preMock', 'mock'];
 router
