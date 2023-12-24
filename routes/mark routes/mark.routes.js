@@ -12,11 +12,12 @@ router
 	.post(
 		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
 		marksController.createStudentsMark
-	)
-	.get(
-		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
-		marksController.getAllStudentsMarkSheet
 	);
+router.get(
+	'/',
+	authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+	marksController.getAllStudentsMarkSheet
+);
 
 router.route('/course/:courseID/students').post(
 	//using post for getting data because request needs data from the request body
