@@ -1,5 +1,6 @@
 const sendResponse = require('../../utilities/sendResponse');
 const Student = require('./../../models/students.model');
+const Course = require('./../../models/courses.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const catchAsync = require('./../../utilities/catchAsync');
 
@@ -78,5 +79,25 @@ exports.getStudentsPerStaff = catchAsync(async (req, res, next) => {
 	console.log(levels);
 	//Now get all students who are in any of the levels found in the levels array
 	const students = await Student.find({ level: { $in: levels } });
+	sendResponse(res, 'success', 200, students);
+});
+
+exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
+	const { courseID } = req.params;
+
+	const course = await Course.findById(courseID);
+
+	let courseInfo = [];
+	course.specialty.map((spec) => {
+		courseInfo.push(spec._id);
+	});
+
+	const level = course.levels;
+
+	const students = await Student.find({
+		specialty: { $in: courseInfo },
+		level: { $in: level },
+	});
+
 	sendResponse(res, 'success', 200, students);
 });

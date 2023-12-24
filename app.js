@@ -13,6 +13,7 @@ const specialtyRouter = require('./routes/specialty routes/specialty.routes');
 const studentRouter = require('./routes/student routes/student.routes');
 const courseRouter = require('./routes/course routes/course.routes');
 const staffCourseRouter = require('./routes/staff_course routes/staff_course.routes');
+const markRouter = require('./routes/mark routes/mark.routes');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/v1/specialty', specialtyRouter);
 app.use('/api/v1/student', studentRouter);
 app.use('/api/v1/course', courseRouter);
 app.use('/api/v1/staff-course', staffCourseRouter);
+app.use('/api/v1/mark', markRouter);
 
 app.all('*', (req, res, next) => {
 	const statusCode = 404;

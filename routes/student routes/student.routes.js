@@ -8,10 +8,6 @@ const router = express.Router();
 
 router.use(authController.protect);
 
-// router.use(
-// 	authController.restrictTo('admin', 'director', 'hod', 'secreteriat')
-// );
-
 router
 	.route('/')
 	.get(studentController.getAllStudents)
@@ -20,5 +16,16 @@ router
 		studentController.createStudent
 	);
 
-router.get('/:staffID/students', authController.restrictTo(...RIGHT.TO_ALL_STAFF), studentController.getStudentsPerStaff);
+router.get(
+	'/:staffID/students',
+	authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+	studentController.getStudentsPerStaff
+);
+
+router.get(
+	'/course/:courseID',
+	authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+	studentController.getStudentsPerCourseOffering
+);
+
 module.exports = router;
