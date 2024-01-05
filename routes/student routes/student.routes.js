@@ -16,6 +16,13 @@ router
 		studentController.createStudent
 	);
 
+router
+	.route('/:id')
+	.patch(
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_STAFF),
+		studentController.editStudent
+	);
+
 router.get(
 	'/:staffID/students',
 	authController.restrictTo(...RIGHT.TO_ALL_STAFF),
