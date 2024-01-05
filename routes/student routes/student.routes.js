@@ -18,6 +18,10 @@ router
 
 router
 	.route('/:id')
+	.get(
+		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+		studentController.getStudent
+	)
 	.patch(
 		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_STAFF),
 		studentController.editStudent
