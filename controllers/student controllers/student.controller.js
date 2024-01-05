@@ -46,6 +46,19 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 201, student);
 });
 
+exports.editStudent = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+
+	const student = await Student.findByIdAndUpdate(id, req.body, {
+		new: true,
+		runValidators: true,
+	});
+
+	if (!student) return next(new ErrorApi('No student found with this ID'));
+
+	sendResponse(res, 'success', 200, student);
+});
+
 exports.getAllStudents = catchAsync(async (req, res, next) => {
 	const students = await Student.find({});
 
