@@ -59,6 +59,16 @@ exports.editStudent = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, student);
 });
 
+exports.getStudent = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+
+	const student = await Student.findById(id);
+
+	if (!student) return next(new ErrorApi('Student not found with this ID'));
+
+	sendResponse(res, 'success', 200, student);
+});
+
 exports.getAllStudents = catchAsync(async (req, res, next) => {
 	const students = await Student.find({});
 
