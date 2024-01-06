@@ -30,7 +30,7 @@ const studentSchema = new mongoose.Schema({
 		required: [true, 'Student must have a date of birth'],
 		validate: [validator.isDate, 'Date must be yyyy/mm/dd'], //Check this after
 	},
-	pod: {
+	pob: {
 		type: String,
 	},
 	email: {
