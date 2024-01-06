@@ -54,7 +54,7 @@ exports.editStudent = catchAsync(async (req, res, next) => {
 		runValidators: true,
 	});
 
-	if (!student) return next(new ErrorApi('No student found with this ID'));
+	if (!student) return next(new ErrorApi('No student found with this ID', 404));
 
 	sendResponse(res, 'success', 200, student);
 });
@@ -64,7 +64,7 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 
 	const student = await Student.findById(id);
 
-	if (!student) return next(new ErrorApi('Student not found with this ID'));
+	if (!student) return next(new ErrorApi('Student not found with this ID', 404));
 
 	sendResponse(res, 'success', 200, student);
 });
