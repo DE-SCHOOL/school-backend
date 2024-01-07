@@ -24,10 +24,9 @@ exports.getStaff = catchAsync(async (req, res, next) => {
 
 exports.editStaff = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-
-	if (req.body?.password) delete req.body.password;
-	if (req.body?.confirmPassword) delete req.body.confirmPassword;
-
+	if (req.body?.password || req.body?.password === '') delete req.body.password;
+	if (req.body?.confirmPassword || req.body?.confirmPassword === '')
+		delete req.body.confirmPassword;
 	const staff = await Staff.findByIdAndUpdate(id, req.body, {
 		new: true,
 		runValidators: true,
