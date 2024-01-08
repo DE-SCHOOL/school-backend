@@ -23,5 +23,9 @@ router
 	.get(
 		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
 		staffCourseController.getMyCourses
+	)
+	.patch(
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+		staffCourseController.editAssignedCourses
 	);
 module.exports = router;
