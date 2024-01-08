@@ -29,6 +29,37 @@ exports.createCourse = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 201, courses);
 });
 
+exports.editCourse = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+	const { name, specialty, code, semester, levels, credit_value, status } =
+		req.body;
+
+	if (!specialty || specialty?.length === 0)
+		return next(
+			new ErrorApi('A course must be assigned to atleast a specialty', 400)
+		);
+	if (!levels || levels?.length === 0)
+		return next(
+			new ErrorApi('A course must be assigned to atleast a level', 400)
+		);
+
+	const course = await Course.findByIdAndUpdate(
+		id,
+		{
+			name,
+			specialty,
+			code,
+			semester,
+			levels,
+			credit_value,
+			status,
+		},
+		{ new: true, runValidators: true }
+	);
+
+	sendResponse(res, 'success', 200, course);
+});
+
 exports.getAllCourses = catchAsync(async (req, res, next) => {
 	const courses = await Course.find({});
 

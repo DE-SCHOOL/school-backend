@@ -22,6 +22,10 @@ router
 	.get(
 		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
 		courseController.getCourse
+	)
+	.patch(
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+		courseController.editCourse
 	);
 
 router.route('/specialty/:id').get(courseController.getCoursesPerSpecialty);
