@@ -30,9 +30,8 @@ module.exports = (err, req, res, next) => {
 	if (process.env.NODE_ENV === 'development') {
 		sendErrorDev(err, statusCode, res);
 	} else if (process.env.NODE_ENV === 'production') {
-		const error = { ...err };
-		error.message = 'Something went very wrong';
-		error.isOperational = true;
+		const error = { ...err, message };
+
 		if (err.code === 11000) {
 			const msg = err.message.split(':');
 			error.message = `Duplicate value, for ${msg[4].replace('}', '')}`;
@@ -44,7 +43,7 @@ module.exports = (err, req, res, next) => {
 		if (err.name === 'ValidationError') {
 			error.message = err.message.split(':')[2];
 		}
-		
+
 		sendErrorProd(error, statusCode, res);
 	}
 };
