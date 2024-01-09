@@ -63,7 +63,7 @@ exports.login = catchAsync(async (req, res, next) => {
 	if (!email || !password)
 		return next(new ErrorApi('Email or password missing', 400));
 
-	console.log(email);
+	// console.log(email);
 	const staff = await Staff.findOne({ email }).select('+password');
 
 	if (!staff) return next(new ErrorApi('User not found with this email', 403));
@@ -97,7 +97,7 @@ exports.login = catchAsync(async (req, res, next) => {
 			// secure: false,
 		};
 	}
-	console.log(cookieOption);
+	// console.log(cookieOption);
 	res.cookie('jwt', token, cookieOption);
 
 	staff._doc.token = token;
