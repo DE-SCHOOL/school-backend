@@ -26,7 +26,7 @@ app.use(
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
 		origin: 'http://54.175.0.41:3000',
-		// origin: 'https://school-frontend-alpha.vercel.app',
+		// origin: 'http://localhost:3000',
 		optionsSuccessStatus: 204,
 	})
 );
@@ -52,4 +52,3 @@ app.all('*', (req, res, next) => {
 app.use(errorHandler);
 
 module.exports = app;
-
