@@ -33,4 +33,10 @@ router
 		marksController.updateStudentsMark
 	);
 
+router
+	.route('/student/courses')
+	.post(
+		authController.restrictTo('admin'),
+		marksController.getStudentMarkSheetAllCourses
+	);
 module.exports = router;
