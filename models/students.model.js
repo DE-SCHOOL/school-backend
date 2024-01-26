@@ -97,7 +97,6 @@ const studentSchema = new mongoose.Schema({
 
 studentSchema.pre(/^find/, function (next) {
 	this.populate('specialty', 'name');
-
 	next();
 });
 
