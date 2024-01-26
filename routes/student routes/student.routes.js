@@ -39,4 +39,10 @@ router.get(
 	studentController.getStudentsPerCourseOffering
 );
 
+router.post(
+	'/search',
+	authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+	studentController.getStudentPerSearch
+);
+
 module.exports = router;

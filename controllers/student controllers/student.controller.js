@@ -1,6 +1,9 @@
 const sendResponse = require('../../utilities/sendResponse');
 const Student = require('./../../models/students.model');
 const Course = require('./../../models/courses.model');
+const Specialty = require('./../../models/specialty.model');
+const Department = require('./../../models/department.model');
+const Program = require('./../../models/programs.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const catchAsync = require('./../../utilities/catchAsync');
 
@@ -64,7 +67,8 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 
 	const student = await Student.findById(id);
 
-	if (!student) return next(new ErrorApi('Student not found with this ID', 404));
+	if (!student)
+		return next(new ErrorApi('Student not found with this ID', 404));
 
 	sendResponse(res, 'success', 200, student);
 });
@@ -120,6 +124,57 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 	const students = await Student.find({
 		specialty: { $in: courseInfo },
 		level: { $in: level },
+	});
+
+	sendResponse(res, 'success', 200, students);
+});
+
+exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
+	const { name, specialty, department, level, program } = req.body;
+	const searchData = { name, specialty, department, level, program };
+
+	// making the search obj
+	let search = { name, level, specialty };
+	for (let key in search) {
+		if (search[key] === '' || search[key] === undefined) delete search[key];
+	}
+
+	// Specialty || Get all specialties as an array from a given department
+	let specialties;
+	if (department !== '' && department !== undefined) {
+		specialties = await Specialty.find({ department });
+		specialties = specialties.map((spec) => `${spec._id}`);
+
+		//add the specialties to the search object
+		search = { ...search, specialty: { $in: specialties } };
+	}
+
+	//Department || Get all specialties as an array from a given program
+	let departments;
+	if (program !== '' && program !== undefined) {
+		//get all departments as an array
+		departments = await Department.find({ program });
+		departments = departments.map((dep) => `${dep._id}`);
+
+		//get all specialties as an array.
+		specialties = await Specialty.find({ department: { $in: departments } });
+		specialties = specialties.map((spec) => `${spec._id}`);
+
+		//add the specialties to the search object
+		search = { ...search, specialty: { $in: specialties } };
+	}
+
+	// make provision for insensitive search fo name if it exist
+	if (name !== '' && name !== undefined) {
+		let regex = new RegExp(name, 'i');
+		search.name = { $regex: regex };
+	}
+	console.log(search, 'search');
+
+	let students = await Student.find({ $or: [search] }).sort({
+		level: 1,
+		name: 1,
+		specialty: 1,
 	});
 
 	sendResponse(res, 'success', 200, students);
