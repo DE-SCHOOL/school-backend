@@ -75,7 +75,7 @@ exports.getCourse = catchAsync(async (req, res, next) => {
 
 exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	let courses = await Course.find({ specialty: [`${id}`] });
+	let courses = await Course.find({ specialty: `${id}` });
 
 	if (!courses) courses = [];
 
