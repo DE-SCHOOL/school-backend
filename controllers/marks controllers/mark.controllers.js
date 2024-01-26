@@ -52,3 +52,22 @@ exports.updateStudentsMark = catchAsync(async (req, res, next) => {
 	}
 	sendResponse(res, 'success', 200, studentsMark);
 });
+
+exports.getStudentMarkSheetAllCourses = catchAsync(async (req, res, next) => {
+	const { courses, studID, academicYear } = req.body;
+
+	if (
+		courses === undefined ||
+		studID === undefined ||
+		academicYear === undefined
+	) {
+		return next(
+			new ErrorApi('Courses, studID and level must be provided', 400)
+		);
+	}
+
+	const search = { course: courses, student: studID, academicYear };
+	let studentSheet = await Mark.find(search);
+
+	sendResponse(res, 'success', 200, studentSheet);
+});
