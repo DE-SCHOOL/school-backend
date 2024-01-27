@@ -137,7 +137,7 @@ exports.getStaffCourse = catchAsync(async (req, res, next) => {
 
 exports.getMyCourses = catchAsync(async (req, res, next) => {
 	const staff = req.params.teacherID;
-	console.log(staff);
+	// console.log(staff);
 	const teacherCoursesInfo = await StaffCourse.find({ staff });
 
 	const courses = [];
@@ -172,6 +172,6 @@ exports.getMyCourses = catchAsync(async (req, res, next) => {
 		staff: courses[0]?.staff,
 	};
 
-	console.log(data);
+	// console.log(data);
 	sendResponse(res, 'success', 200, data);
 });
