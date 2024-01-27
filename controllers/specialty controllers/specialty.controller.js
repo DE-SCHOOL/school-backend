@@ -14,17 +14,33 @@ exports.createSpecialty = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 201, specialty);
 });
 
+exports.editSpecialty = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+	const { name, department } = req.body;
+
+	const specialty = await Specialty.findByIdAndUpdate(
+		id,
+		{ name, department },
+		{ runValidators: true, new: true }
+	);
+
+	if (!specialty) return next(new ErrorApi('Specialty not found', 404));
+
+	sendResponse(res, 'success', 200, specialty);
+});
+
 exports.getAllSpecialties = catchAsync(async (req, res, next) => {
 	const specialties = await Specialty.find({});
 
 	sendResponse(res, 'success', 200, specialties);
 });
 
-exports.getSpecialtyCoursesInfo = catchAsync(async (req, res, next) => {
+exports.getSpecialty = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	let specialties = await Course.find({ _id: id });
 
-	if (!specialties) specialties = [];
+	const specialty = await Specialty.findById(id);
 
-	sendResponse(res, 'success', 200, specialties);
+	if (!specialty) return next(new ErrorApi('No Specialty found', 404));
+
+	sendResponse(res, 'success', 200, specialty);
 });

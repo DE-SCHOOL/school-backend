@@ -5,17 +5,31 @@ const RIGHT = require('./../../utilities/restrict');
 const express = require('express');
 const router = express.Router();
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
-	.route('/')
+	.route('/:tokenID')
 	.get(
-		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
 		staffCourseController.getStaffCourse
 	)
 	.post(
-		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
 		staffCourseController.assignStaffCourse
 	);
 
+router
+	.route('/:teacherID/:tokenID')
+	.get(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+		staffCourseController.getMyCourses
+	)
+	.patch(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+		staffCourseController.editAssignedCourses
+	);
 module.exports = router;

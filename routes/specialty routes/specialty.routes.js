@@ -1,20 +1,37 @@
 const authController = require('./../../controllers/authentication/auth.controller');
 const specialtyController = require('./../../controllers/specialty controllers/specialty.controller');
+const RIGHTS = require('./../../utilities/restrict');
 
 const express = require('express');
 
 const router = express.Router();
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
-	.route('/')
+	.route('/:tokenID')
 	.post(
-		authController.restrictTo('admin', 'director', 'hod'),
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		specialtyController.createSpecialty
 	)
-	.get(specialtyController.getAllSpecialties);
+	.get(
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
+		specialtyController.getAllSpecialties
+	);
 
-// router.route('/:id').get(specialtyController.getSpecialtyCoursesInfo);
+router
+	.route('/:id/:tokenID')
+	.get(
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
+		specialtyController.getSpecialty
+	)
+	.patch(
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
+		specialtyController.editSpecialty
+	);
 
 module.exports = router;

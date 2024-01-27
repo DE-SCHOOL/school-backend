@@ -1,32 +1,41 @@
 const express = require('express');
 const authController = require('./../../controllers/authentication/auth.controller');
 const staffController = require('./../../controllers/staff controllers/staff.controller');
+const RIGHTS = require('./../../utilities/restrict');
 const router = express.Router();
 
 router.route('/login').post(authController.login);
 router.route('/logout').get(authController.logOut);
 
-router.use(authController.protect);
 router
-	.route('/register')
+	.route('/register/:tokenID')
 	.post(
-		authController.restrictTo('admin', 'director', 'hod'),
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		authController.register
 	);
 
 // router.use(authController.restrictTo('hod', 'admin', 'director', 'lecturer', 'secreteriat'));
 
 router
-	.route('/')
+	.route('/:tokenID')
 	.get(
-		authController.restrictTo(
-			'hod',
-			'admin',
-			'director',
-			'lecturer',
-			'secreteriat'
-		),
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		staffController.getAllStaffs
+	);
+
+router
+	.route('/:id/:tokenID')
+	.get(
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
+		staffController.getStaff
+	)
+	.patch(
+		authController.protect,
+		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
+		staffController.editStaff
 	);
 
 // router.route('/:courseID')
