@@ -103,7 +103,7 @@ exports.getStudentsPerStaff = catchAsync(async (req, res, next) => {
 		}
 	});
 	levels = levels.map((level) => Number(level));
-	console.log(levels);
+	// console.log(levels);
 	//Now get all students who are in any of the levels found in the levels array
 	const students = await Student.find({ level: { $in: levels } });
 	sendResponse(res, 'success', 200, students);
@@ -169,7 +169,7 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		let regex = new RegExp(name, 'i');
 		search.name = { $regex: regex };
 	}
-	console.log(search, 'search');
+	// console.log(search, 'search');
 
 	let students = await Student.find({ $or: [search] }).sort({
 		level: 1,

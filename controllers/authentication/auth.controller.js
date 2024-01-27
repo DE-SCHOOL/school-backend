@@ -76,28 +76,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
 	const token = await createToken(`${staff._id}`);
 
-	console.log('SETTING COOKIE', 1, token, 111111, process.env.COOKIE_EXP);
 	let cookieOption = {};
-	if (process.env.NODE_ENV === 'production') {
-		cookieOption = {
-			httpOnly: true,
-			expires: new Date(
-				Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
-			),
-			// domain: '.vercel.app',
-			// secure: true,
-		};
-	} else {
-		cookieOption = {
-			httpOnly: true,
-			expires: new Date(
-				Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
-			),
-			// domain: 'localhost',
-			// secure: false,
-		};
-	}
-	// console.log(cookieOption);
+	cookieOption = {
+		httpOnly: true,
+		expires: new Date(
+			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+		),
+	};
+
 	res.cookie('jwt', token, cookieOption);
 
 	staff._doc.token = token;
@@ -108,8 +94,12 @@ exports.protect = catchAsync(async (req, res, next) => {
 	//IN PURE DEVELOPMENT
 	// let token = req.headers;
 	// token = token?.authorization?.split(' ')[1];
-	let token = req.cookies.jwt;
 	// console.log(req.cookies, 'JWT CHECKING', token, 'TOKEN FOXFIRE');
+	// let token = req.cookies.jwt;
+
+	// let token = req.params;
+	// console.log(req.params.tokenID, 222222333333333333);
+	let token = req.params.tokenID;
 	if (!token)
 		return next(
 			new ErrorApi('No token, please login to be an authorized user', 401)
@@ -146,16 +136,17 @@ exports.restrictTo = (...roles) => {
 };
 
 exports.logOut = catchAsync(async (req, res, next) => {
-	res.cookie('jwt', 'loged-out', {
-		httpOnly: true,
-		expires: new Date(
-			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
-		),
-		// domain: '.vercel.com',
-		// secure: true,
-		// sameSite: 'None',
-	});
+	// res.cookie('jwt', 'loged-out', {
+	// 	httpOnly: true,
+	// 	expires: new Date(
+	// 		Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
+	// 	),
+	// 	// domain: '.vercel.com',
+	// 	// secure: true,
+	// 	// sameSite: 'None',
 
+	// 	//EVERYTHING NOW DONE ON THE FRONTEND. LOCAL STORAGE COOKIE REMOVED
+	// });
 	sendResponse(res, 'success', 200, [{ token: '' }]);
 });
 exports.forgetPassword = catchAsync(async (req, res, next) => {});

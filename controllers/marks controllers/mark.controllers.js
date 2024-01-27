@@ -6,7 +6,7 @@ const catchAsync = require('./../../utilities/catchAsync');
 exports.createStudentsMark = catchAsync(async (req, res, next) => {
 	const { courseID } = req.params;
 	const { students, academicYear } = req.body;
-	console.log(students, 111111);
+	// console.log(students, 111111);
 	let studentsMark = [];
 	for (let i = 0; i < students.length; i++) {
 		studentsMark[i] = await Mark.create({
