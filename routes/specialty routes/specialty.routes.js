@@ -6,26 +6,30 @@ const express = require('express');
 
 const router = express.Router();
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
-	.route('/')
+	.route('/:tokenID')
 	.post(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		specialtyController.createSpecialty
 	)
 	.get(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		specialtyController.getAllSpecialties
 	);
 
 router
-	.route('/:id')
+	.route('/:id/:tokenID')
 	.get(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		specialtyController.getSpecialty
 	)
 	.patch(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		specialtyController.editSpecialty
 	);

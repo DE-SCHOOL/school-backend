@@ -7,10 +7,10 @@ const router = express.Router();
 router.route('/login').post(authController.login);
 router.route('/logout').get(authController.logOut);
 
-router.use(authController.protect);
 router
-	.route('/register')
+	.route('/register/:tokenID')
 	.post(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		authController.register
 	);
@@ -18,19 +18,22 @@ router
 // router.use(authController.restrictTo('hod', 'admin', 'director', 'lecturer', 'secreteriat'));
 
 router
-	.route('/')
+	.route('/:tokenID')
 	.get(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		staffController.getAllStaffs
 	);
 
 router
-	.route('/:id')
+	.route('/:id/:tokenID')
 	.get(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		staffController.getStaff
 	)
 	.patch(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		staffController.editStaff
 	);

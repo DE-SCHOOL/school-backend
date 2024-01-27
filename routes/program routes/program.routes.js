@@ -6,22 +6,28 @@ const express = require('express');
 
 const router = express.Router();
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
-	.route('/')
+	.route('/:tokenID')
 	.get(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		programController.getPrograms
 	)
 	.post(authController.restrictTo('admin'), programController.createProgram);
 
 router
-	.route('/:id')
+	.route('/:id/:tokenID')
 	.get(
+		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		programController.getProgram
 	)
-	.patch(authController.restrictTo('admin'), programController.editProgram);
+	.patch(
+		authController.protect,
+		authController.restrictTo('admin'),
+		programController.editProgram
+	);
 
 module.exports = router;
