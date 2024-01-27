@@ -26,7 +26,6 @@ app.use(
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
 		origin: 'http://localhost:3000',
-		// origin: 'https://school-frontend-alpha.vercel.app',
 		optionsSuccessStatus: 204,
 	})
 );
