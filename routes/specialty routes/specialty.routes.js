@@ -8,6 +8,13 @@ const router = express.Router();
 
 // router.use(authController.protect);
 
+router.get(
+	'/',
+	// authController.protect,
+	// authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
+	specialtyController.getAllSpecialties
+);
+
 router
 	.route('/:tokenID')
 	.post(
