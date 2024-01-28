@@ -126,6 +126,7 @@ exports.restrictTo = (...roles) => {
 		// console.log(req.staff, 1111111111111111111111111);
 		const { role } = req.staff;
 		// console.log(role, roles);
+		console.log(role, 'ROLE');
 		if (!roles.includes(role)) {
 			return next(
 				new ErrorApi('You do not have permission to perform this action', 403)

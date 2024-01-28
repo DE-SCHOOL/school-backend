@@ -35,13 +35,16 @@ module.exports = (err, req, res, next) => {
 		if (err.code === 11000) {
 			const msg = err.message.split(':');
 			error.message = `Duplicate value, for ${msg[4].replace('}', '')}`;
+			error.isOperational = true;
 		}
 		if (err.name === 'TokenExpiredError') {
+			error.isOperational = true;
 			error.message =
 				'Login expired! Login to refresh you authentication session';
 		}
 		if (err.name === 'ValidationError') {
 			error.message = err.message.split(':')[2];
+			error.isOperational = true;
 		}
 
 		sendErrorProd(error, statusCode, res);

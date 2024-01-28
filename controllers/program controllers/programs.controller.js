@@ -5,6 +5,7 @@ const catchAsync = require('./../../utilities/catchAsync');
 
 exports.createProgram = catchAsync(async (req, res, next) => {
 	const { name, director, deputyDirector } = req.body;
+	console.log({ name, director, deputyDirector }, 11111111111);
 
 	const program = await Program.create({ name, director, deputyDirector });
 
