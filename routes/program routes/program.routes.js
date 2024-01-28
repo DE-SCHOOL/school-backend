@@ -15,7 +15,11 @@ router
 		authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 		programController.getPrograms
 	)
-	.post(authController.restrictTo('admin'), programController.createProgram);
+	.post(
+		authController.protect,
+		authController.restrictTo('admin'),
+		programController.createProgram
+	);
 
 router
 	.route('/:id/:tokenID')
