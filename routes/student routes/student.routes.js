@@ -13,12 +13,12 @@ router.route('/').post(studentController.createStudent);
 
 router
 	.route('/:tokenID')
-	.get(authController.protect, studentController.getAllStudents);
-// .post(
-// 	authController.protect,
-// 	authController.restrictTo('admin', 'director', 'hod', 'secreteriat'),
-// 	studentController.createStudent
-// );
+	.get(authController.protect, studentController.getAllStudents)
+	.post(
+		authController.protect,
+		authController.restrictTo('admin', 'director', 'hod', 'secreteriat'),
+		studentController.createStudent
+	);
 
 router
 	.route('/:id/:tokenID')
