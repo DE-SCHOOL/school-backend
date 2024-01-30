@@ -24,7 +24,7 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 		parent_tel,
 		level,
 		entry_certificate,
-		pod,
+		pob,
 	} = req.body;
 
 	const student = await Student.create({
@@ -41,7 +41,7 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 		parent_tel,
 		level,
 		entry_certificate,
-		pod,
+		pob,
 	});
 
 	if (!student) return next(new ErrorApi('Student not created', 400));
