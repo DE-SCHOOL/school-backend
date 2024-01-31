@@ -31,8 +31,20 @@ exports.getMarkSheetsPerCoursePerStudents = catchAsync(
 		const studentsMarksheet = await Mark.find({
 			course,
 			student: { $in: students },
-		});
+		}).exec();
 
+		studentsMarksheet.sort((a, b) => {
+			const nameA = a.student.name.toUpperCase();
+			const nameB = b.student.name.toUpperCase();
+
+			if (nameA < nameB) {
+				return -1;
+			}
+			if (nameA > nameB) {
+				return 1;
+			}
+			return 0;
+		});
 		sendResponse(res, 'success', 200, studentsMarksheet);
 	}
 );
