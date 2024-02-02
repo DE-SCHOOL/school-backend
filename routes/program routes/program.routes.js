@@ -32,6 +32,11 @@ router
 		authController.protect,
 		authController.restrictTo('admin'),
 		programController.editProgram
+	)
+	.delete(
+		authController.protect,
+		authController.restrictTo('admin'),
+		programController.deleteProgram
 	);
 
 module.exports = router;

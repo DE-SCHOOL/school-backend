@@ -36,3 +36,12 @@ exports.editStaff = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, staff);
 });
+
+exports.deleteStaff= catchAsync(async (req, res, next) => {
+	const id = req.params.id;
+	const staff = await Staff.findByIdAndDelete(id);
+
+	const staffs = await Staff.find({});
+
+	sendResponse(res, 'success', 200, staffs);
+});

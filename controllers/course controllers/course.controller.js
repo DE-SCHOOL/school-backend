@@ -81,3 +81,12 @@ exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, courses);
 });
+
+exports.deleteCourse = catchAsync(async (req, res, next) => {
+	const id = req.params.id;
+	const course = await Course.findByIdAndDelete(id);
+
+	const courses = await Course.find({});
+
+	sendResponse(res, 'success', 200, courses);
+});

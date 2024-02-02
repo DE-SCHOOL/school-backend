@@ -36,6 +36,11 @@ router
 		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		staffController.editStaff
+	)
+	.delete(
+		authController.protect,
+		authController.restrictTo('admin'),
+		staffController.deleteStaff
 	);
 
 // router.route('/:courseID')

@@ -179,3 +179,12 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, students);
 });
+
+exports.deleteStudent = catchAsync(async (req, res, next) => {
+	const id = req.params.id;
+	const student = await Student.findByIdAndDelete(id);
+
+	const students = await Student.find({});
+
+	sendResponse(res, 'success', 200, students);
+});

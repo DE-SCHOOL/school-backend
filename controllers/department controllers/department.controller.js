@@ -53,3 +53,12 @@ exports.getDepartment = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, department);
 });
+
+exports.deleteDepartment = catchAsync(async (req, res, next) => {
+	const id = req.params.id;
+	const depart = await Department.findByIdAndDelete(id);
+
+	const departments = await Department.find({});
+
+	sendResponse(res, 'success', 200, departments);
+});
