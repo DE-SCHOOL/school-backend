@@ -30,6 +30,11 @@ router
 		authController.protect,
 		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
 		courseController.editCourse
+	)
+	.delete(
+		authController.protect,
+		authController.restrictTo('admin'),
+		courseController.deleteCourse
 	);
 
 router

@@ -44,3 +44,12 @@ exports.getSpecialty = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, specialty);
 });
+
+exports.deleteSpecialty = catchAsync(async (req, res, next) => {
+	const id = req.params.id;
+	const specialty = await Specialty.findByIdAndDelete(id);
+
+	const specialties = await Specialty.find({});
+
+	sendResponse(res, 'success', 200, specialties);
+});

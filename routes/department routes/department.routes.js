@@ -32,6 +32,11 @@ router
 		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_MAIN_ADMIN),
 		departmentController.editDepartment
+	)
+	.delete(
+		authController.protect,
+		authController.restrictTo('admin'),
+		departmentController.deleteDepartment
 	);
 
 module.exports = router;

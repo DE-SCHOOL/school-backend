@@ -39,6 +39,11 @@ router
 		authController.protect,
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		specialtyController.editSpecialty
+	)
+	.delete(
+		authController.protect,
+		authController.restrictTo('admin'),
+		specialtyController.deleteSpecialty
 	);
 
 module.exports = router;

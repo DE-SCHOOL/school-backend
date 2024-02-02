@@ -44,3 +44,12 @@ exports.editProgram = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, program);
 });
+
+exports.deleteProgram = catchAsync(async (req, res, next) => {
+	const id = req.params.id;
+	const program = await Program.findByIdAndDelete(id);
+
+	const programs = await Program.find({});
+
+	sendResponse(res, 'success', 200, programs);
+});

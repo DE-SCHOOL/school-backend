@@ -31,6 +31,11 @@ router
 		authController.protect,
 		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_STAFF),
 		studentController.editStudent
+	)
+	.delete(
+		authController.protect,
+		authController.restrictTo('admin'),
+		studentController.deleteStudent
 	);
 
 router.get(
