@@ -62,6 +62,20 @@ exports.updateStudentsMark = catchAsync(async (req, res, next) => {
 			{ new: true }
 		);
 	}
+
+	studentsMark.sort((a, b) => {
+		const nameA = a.student.name.toUpperCase();
+		const nameB = b.student.name.toUpperCase();
+
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+		return 0;
+	});
+
 	sendResponse(res, 'success', 200, studentsMark);
 });
 
