@@ -41,4 +41,12 @@ router
 	.route('/specialty/:id/:tokenID')
 	.get(authController.protect, courseController.getCoursesPerSpecialty);
 
+router
+	.route('/level/specialty/:id/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+		courseController.getCoursesPerSpecialtyPerLevel
+	);
+
 module.exports = router;
