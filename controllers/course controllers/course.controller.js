@@ -82,6 +82,18 @@ exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, courses);
 });
 
+exports.getCoursesPerSpecialtyPerLevel = catchAsync(async (req, res, next) => {
+	const { id } = req.params;
+	const { level } = req.body;
+	let courses = await Course.find({ specialty: `${id}`, levels: level });
+
+	// console.log(courses);
+
+	if (!courses) courses = [];
+
+	sendResponse(res, 'success', 200, courses);
+});
+
 exports.deleteCourse = catchAsync(async (req, res, next) => {
 	const id = req.params.id;
 	const course = await Course.findByIdAndDelete(id);
