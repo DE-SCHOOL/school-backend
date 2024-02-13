@@ -29,7 +29,7 @@ const courseSchema = new mongoose.Schema({
 		{
 			type: Number,
 			enum: {
-				values: [200, 300, 400, 500],
+				values: [200, 300, 400, 500, 600],
 				message: 'A level must either be 200, 300, 400, or 500',
 			},
 			required: [true, 'A course is tought in a particular class level'],

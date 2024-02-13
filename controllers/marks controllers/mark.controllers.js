@@ -1,12 +1,13 @@
 const Mark = require('./../../models/marks.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
+const Course = require('./../../models/courses.model');
 const sendResponse = require('./../../utilities/sendResponse');
 const catchAsync = require('./../../utilities/catchAsync');
 
 exports.createStudentsMark = catchAsync(async (req, res, next) => {
 	const { courseID } = req.params;
 	const { students, academicYear } = req.body;
-	// console.log(students, 111111);
+
 	let studentsMark = [];
 	for (let i = 0; i < students.length; i++) {
 		studentsMark[i] = await Mark.create({
@@ -15,6 +16,19 @@ exports.createStudentsMark = catchAsync(async (req, res, next) => {
 			academicYear: '2023/2024',
 		});
 	}
+
+	studentsMark.sort((a, b) => {
+		const nameA = a.student.name?.toUpperCase();
+		const nameB = b.student.name?.toUpperCase();
+
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+		return 0;
+	});
 	sendResponse(res, 'success', 201, studentsMark);
 });
 
@@ -31,11 +45,11 @@ exports.getMarkSheetsPerCoursePerStudents = catchAsync(
 		const studentsMarksheet = await Mark.find({
 			course,
 			student: { $in: students },
-		}).exec();
+		});
 
 		studentsMarksheet.sort((a, b) => {
-			const nameA = a.student.name.toUpperCase();
-			const nameB = b.student.name.toUpperCase();
+			const nameA = a.student.name?.toUpperCase();
+			const nameB = b.student.name?.toUpperCase();
 
 			if (nameA < nameB) {
 				return -1;
@@ -54,6 +68,7 @@ exports.updateStudentsMark = catchAsync(async (req, res, next) => {
 	const { courseID, markType } = req.params;
 	const { marks, students } = req.body;
 
+	// console.log(students, 1111111);
 	let studentsMark = [];
 	for (let i = 0; i < students.length; i++) {
 		studentsMark[i] = await Mark.findOneAndUpdate(
@@ -62,6 +77,20 @@ exports.updateStudentsMark = catchAsync(async (req, res, next) => {
 			{ new: true }
 		);
 	}
+
+	studentsMark.sort((a, b) => {
+		const nameA = a.student.name?.toUpperCase();
+		const nameB = b.student.name?.toUpperCase();
+
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+		return 0;
+	});
+
 	sendResponse(res, 'success', 200, studentsMark);
 });
 
@@ -83,3 +112,85 @@ exports.getStudentMarkSheetAllCourses = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, studentSheet);
 });
+
+exports.getAllStudentMarkSheetAllCourses = catchAsync(
+	async (req, res, next) => {
+		const { students, academicYear, semester } = req.body;
+
+		//get student IDs
+		let studIDs = [];
+		students.map((student) => {
+			studIDs.push(student._id);
+			return student;
+		});
+
+		//get specialty IDs
+		let specialties = [];
+		students.map((student) => {
+			specialties.push(student?.specialty?._id);
+			return student;
+		});
+
+		if (studIDs === undefined || academicYear === undefined) {
+			return next(
+				new ErrorApi('Courses, studID and level must be provided', 400)
+			);
+		}
+
+		//Get student courses per semester for a particular specialty in a particular year
+		let courses = [];
+		for (i = 0; i < specialties.length; i++) {
+			courses[i] = Course.find({
+				specialty: specialties[i],
+				semester,
+				levels: students[i].level,
+			});
+		}
+
+		courses = await Promise.all(courses);
+
+		//Get CoursesID from courses
+		let myCourse2D = [];
+		myCourse2D = courses.map((eachArr) => {
+			return eachArr.map((course) => {
+				return course._id;
+			});
+		});
+		// console.log(courses, myCourse2D);
+
+		//Find student results based on his/her courses and academicYear
+		let j = 0;
+		let results = studIDs.map(async (studID) => {
+			let search = { student: studID, academicYear, course: myCourse2D[j] };
+			j = j + 1;
+			return await Mark.find(search);
+		});
+
+		let allValues = await Promise.all(results);
+
+		sendResponse(res, 'success', 200, allValues);
+	}
+);
+
+// exports.getAllStudentMarkSheetAllCourses = catchAsync(
+// 	async (req, res, next) => {
+// 		const { studID: studIDs, academicYear } = req.body;
+
+// 		if (studIDs === undefined || academicYear === undefined) {
+// 			return next(
+// 				new ErrorApi('Courses, studID and level must be provided', 400)
+// 			);
+// 		}
+
+// 		let results = studIDs.map(async (studID, index) => {
+// 			let search = { student: studID, academicYear, course: { $ne: null } };
+// 			return await Mark.find(search);
+// 		});
+
+// 		let allValues = await Promise.all(results);
+
+// 		sendResponse(res, 'success', 200, allValues);
+// 	}
+// );
+
+// http://localhost:8000/api/v1/mark/all/student/courses/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NWEyNTI1MGRhODJkZmY1ZmMwYTEzYSIsImlhdCI6MTcwNjYzNzIwNSwiZXhwIjoxNzE0NDEzMjA1fQ.hDfjLtmvwInFwGGftXUnjqa7TPzxQmfbk_bHRklr-88

@@ -65,9 +65,9 @@ const markSchema = new mongoose.Schema(
 markSchema.index({ course: 1, student: 1 }, { unique: true });
 
 markSchema.pre(/^find/, function (next) {
-	this.populate('course', 'name code credit_value status').populate(
+	this.populate('course', 'name code credit_value status levels').populate(
 		'student',
-		'name matricule level'
+		'name matricule level gender dob pob'
 	);
 
 	next();
@@ -84,13 +84,13 @@ markSchema.virtual('s2Total').get(function () {
 //credit earned
 markSchema.virtual('s1CreditEarned').get(function () {
 	// console.log(this.s1Total, this.course.credit_value);
-	if (this.s1Total >= 50) return this.course.credit_value;
+	if (this.s1Total >= 50) return this?.course?.credit_value || 0;
 
 	return 0;
 });
 markSchema.virtual('s2CreditEarned').get(function () {
 	// console.log(this.s1Total, this.course.credit_value);
-	if (this.s2Total >= 50) return this.course.credit_value;
+	if (this.s2Total >= 50) return this?.course?.credit_value || 0;
 
 	return 0;
 });

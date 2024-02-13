@@ -78,8 +78,8 @@ exports.getStaffCourse = catchAsync(async (req, res, next) => {
 	//Get all staff IDs as an array
 	let staffsID = [];
 	assignedCourses.map((course) => {
-		if (!staffsID.includes(`${course.staff._id}`)) {
-			staffsID.push(`${course.staff._id}`);
+		if (!staffsID.includes(`${course.staff?._id}`)) {
+			staffsID.push(`${course.staff?._id}`);
 		}
 	});
 
@@ -89,7 +89,7 @@ exports.getStaffCourse = catchAsync(async (req, res, next) => {
 	let coursesGroup = [];
 	staffsID.map((id) => {
 		let assigned = assignedCourses.filter(
-			(course) => `${course.staff._id}` === id
+			(course) => `${course.staff?._id}` === id
 		);
 
 		//console.log(assigned, 'assigned'); //All courses assigned to a particular teacher, in different occurences
@@ -136,8 +136,11 @@ exports.getStaffCourse = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyCourses = catchAsync(async (req, res, next) => {
-	const staff = req.params.teacherID;
+	const staff = req.params?.teacherID || null;
 	// console.log(staff);
+
+	if (staff === undefined || !staff)
+		return next(new ErrorApi('No teacher was assigned these courses', 400));
 	const teacherCoursesInfo = await StaffCourse.find({ staff });
 
 	const courses = [];

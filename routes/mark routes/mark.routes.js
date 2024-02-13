@@ -44,4 +44,12 @@ router
 		authController.restrictTo('admin'),
 		marksController.getStudentMarkSheetAllCourses
 	);
+
+router
+	.route('/all/student/courses/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo('admin'),
+		marksController.getAllStudentMarkSheetAllCourses
+	);
 module.exports = router;
