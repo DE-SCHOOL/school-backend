@@ -73,11 +73,11 @@ const studentSchema = new mongoose.Schema({
 	},
 	level: {
 		type: Number,
-		required: [true, 'Student must be registering to a specific year'],
 		enum: {
-			values: [200, 300, 400],
-			message: 'level must be 200, 300, or 400',
+			values: [200, 300, 400, 601, 602],
+			message: 'A level must either be 200, 300, 400, 601, or 602',
 		},
+		required: [true, 'A course is tought in a particular class level'],
 	},
 	entry_certificate: {
 		type: String,
