@@ -17,7 +17,7 @@ router
 router.get(
 	'/',
 	authController.protect,
-	authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
+	authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
 	marksController.getAllStudentsMarkSheet
 );
 
@@ -41,7 +41,7 @@ router
 	.route('/student/courses/:tokenID')
 	.post(
 		authController.protect,
-		authController.restrictTo('admin'),
+		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
 		marksController.getStudentMarkSheetAllCourses
 	);
 
@@ -49,7 +49,7 @@ router
 	.route('/all/student/courses/:tokenID')
 	.post(
 		authController.protect,
-		authController.restrictTo('admin'),
+		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
 		marksController.getAllStudentMarkSheetAllCourses
 	);
 module.exports = router;
