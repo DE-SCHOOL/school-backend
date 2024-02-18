@@ -49,4 +49,12 @@ router
 		courseController.getCoursesPerSpecialtyPerLevel
 	);
 
+router
+	.route('/statistics/:courseID/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo('admin'),
+		courseController.primaryCourseStatistics
+	);
+
 module.exports = router;
