@@ -192,6 +192,17 @@ exports.primaryCourseStatistics = catchAsync(async (req, res, next) => {
 		(mark) => mark[`${semester}Total`] <= 49 && mark[`${semester}Total`] >= 46
 	).length;
 
+	const percentPassed = (superSet, subSet) => {
+		if (superSet === 0) return 0.0;
+
+		return ((subSet / superSet) * 100).toFixed(1) || 0;
+	};
+
+	const percentFailed = (superSet, subSet) => {
+		if (subSet === 0) return 0.0;
+
+		return ((subSet / superSet) * 100).toFixed(1) || 0;
+	};
 	const courseStats = {
 		totalOffering: courseMarkInfo.length,
 		totalSat,
@@ -204,10 +215,8 @@ exports.primaryCourseStatistics = catchAsync(async (req, res, next) => {
 		totalCs,
 		totalDs,
 		totalFs,
-		percentPassedBoys:
-			((totalBoysPassed / boyStudents.length) * 100).toFixed(1) || 0,
-		percentPassedGirls:
-			((totalGirlsPassed / girlStudents.length) * 100).toFixed(1) || 0,
+		percentPassedBoys: percentPassed(boyStudents.length, totalBoysPassed),
+		percentPassedGirls: percentPassed(girlStudents.length, totalGirlsPassed),
 		numMarksLess40,
 		numMarksBtw41and45,
 		numMarksBtw46and49,
