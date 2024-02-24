@@ -74,7 +74,11 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllStudents = catchAsync(async (req, res, next) => {
-	const students = await Student.find({});
+	const students = await Student.find({}).sort({
+		level: 1,
+		name: 1,
+		specialty: 1,
+	});
 
 	sendResponse(res, 'success', 200, students);
 });
@@ -146,7 +150,15 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		specialties = specialties.map((spec) => `${spec._id}`);
 
 		//add the specialties to the search object
-		search = { ...search, specialty: { $in: specialties } };
+		search = {
+			...search,
+			specialty: {
+				$in: [
+					...specialties,
+					search?.specialty !== undefined ? search?.specialty : null,
+				],
+			},
+		};
 	}
 
 	//Department || Get all specialties as an array from a given program
@@ -161,7 +173,15 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		specialties = specialties.map((spec) => `${spec._id}`);
 
 		//add the specialties to the search object
-		search = { ...search, specialty: { $in: specialties } };
+		search = {
+			...search,
+			specialty: {
+				$in: [
+					...specialties,
+					search?.specialty !== undefined ? search?.specialty : null,
+				],
+			},
+		};
 	}
 
 	// make provision for insensitive search fo name if it exist
@@ -169,7 +189,6 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		let regex = new RegExp(name, 'i');
 		search.name = { $regex: regex };
 	}
-	// console.log(search, 'search');
 
 	let students = await Student.find({ $or: [search] }).sort({
 		level: 1,
