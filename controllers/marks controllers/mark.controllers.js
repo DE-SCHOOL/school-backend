@@ -3,6 +3,7 @@ const ErrorApi = require('./../../utilities/ErrorApi');
 const Course = require('./../../models/courses.model');
 const sendResponse = require('./../../utilities/sendResponse');
 const catchAsync = require('./../../utilities/catchAsync');
+const Student = require('../../models/students.model');
 
 exports.createStudentsMark = catchAsync(async (req, res, next) => {
 	const { courseID } = req.params;
@@ -115,14 +116,15 @@ exports.getStudentMarkSheetAllCourses = catchAsync(async (req, res, next) => {
 
 exports.getAllStudentMarkSheetAllCourses = catchAsync(
 	async (req, res, next) => {
-		const { students, academicYear, semester } = req.body;
+		const { students: studIDs, academicYear, semester } = req.body;
 
-		//get student IDs
-		let studIDs = [];
-		students.map((student) => {
-			studIDs.push(student._id);
-			return student;
-		});
+		if (studIDs === undefined || academicYear === undefined) {
+			return next(
+				new ErrorApi('Courses, studID and level must be provided', 400)
+			);
+		}
+
+		const students = await Student.find({ _id: studIDs });
 
 		//get specialty IDs
 		let specialties = [];
@@ -131,13 +133,8 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 			return student;
 		});
 
-		if (studIDs === undefined || academicYear === undefined) {
-			return next(
-				new ErrorApi('Courses, studID and level must be provided', 400)
-			);
-		}
-
-		//Get student courses per semester for a particular specialty in a particular year
+		console.log(studIDs, specialties);
+		//Get student courses per semester for a particular specialty in a particular level
 		let courses = [];
 		for (i = 0; i < specialties.length; i++) {
 			courses[i] = Course.find({
