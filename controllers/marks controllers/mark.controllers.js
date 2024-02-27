@@ -133,7 +133,7 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 			return student;
 		});
 
-		console.log(studIDs, specialties);
+		// console.log(studIDs, specialties);
 		//Get student courses per semester for a particular specialty in a particular level
 		let courses = [];
 		for (i = 0; i < specialties.length; i++) {
