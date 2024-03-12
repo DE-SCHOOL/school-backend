@@ -84,13 +84,13 @@ markSchema.virtual('s2Total').get(function () {
 //credit earned
 markSchema.virtual('s1CreditEarned').get(function () {
 	// console.log(this.s1Total, this.course.credit_value);
-	if (this.s1Total >= 50) return this?.course?.credit_value || 0;
+	if (this.s1Total >= 40) return this?.course?.credit_value || 0;
 
 	return 0;
 });
 markSchema.virtual('s2CreditEarned').get(function () {
 	// console.log(this.s1Total, this.course.credit_value);
-	if (this.s2Total >= 50) return this?.course?.credit_value || 0;
+	if (this.s2Total >= 40) return this?.course?.credit_value || 0;
 
 	return 0;
 });
