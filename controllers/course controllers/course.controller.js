@@ -122,7 +122,7 @@ exports.primaryCourseStatistics = catchAsync(async (req, res, next) => {
 });
 
 exports.primaryCoursesStatistics = catchAsync(async (req, res, next) => {
-	console.log('good');
+	// console.log('good');
 	const { semester, academicYear, courseIDs } = req.body;
 
 	let coursesStats = [];
