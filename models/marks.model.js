@@ -143,7 +143,9 @@ markSchema.virtual('s1Grade').get(function () {
 		return 'C+';
 	} else if (this.s1Total >= 50 && this.s1Total < 55) {
 		return 'C';
-	} else if (this.s1Total >= 40 && this.s1Total < 50) {
+	} else if (this.s1Total >= 45 && this.s1Total < 50) {
+		return 'D+';
+	} else if (this.s1Total >= 40 && this.s1Total < 45) {
 		return 'D';
 	} else if (this.s1Total < 40) {
 		return 'F';
@@ -160,7 +162,9 @@ markSchema.virtual('s2Grade').get(function () {
 		return 'C+';
 	} else if (this.s2Total >= 50 && this.s2Total < 55) {
 		return 'C';
-	} else if (this.s2Total >= 40 && this.s2Total < 50) {
+	} else if (this.s2Total >= 45 && this.s2Total < 50) {
+		return 'D+';
+	} else if (this.s2Total >= 40 && this.s2Total < 45) {
 		return 'D';
 	} else if (this.s2Total < 40) {
 		return 'F';

@@ -57,4 +57,12 @@ router
 		courseController.primaryCourseStatistics
 	);
 
+router
+	.route('/statistics/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo('admin'),
+		courseController.primaryCoursesStatistics
+	);
+
 module.exports = router;
