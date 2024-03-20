@@ -1,4 +1,7 @@
 const Course = require('./../../models/courses.model');
+const Program = require('./../../models/programs.model');
+const Department = require('./../../models/department.model');
+const Specialty = require('./../../models/specialty.model');
 // const StaffCourse = require('./../../models/staff_courses.model');
 const Mark = require('./../../models/marks.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
@@ -138,4 +141,73 @@ exports.primaryCoursesStatistics = catchAsync(async (req, res, next) => {
 		coursesStats.push(courseStat);
 	}
 	sendResponse(res, 'success', 200, coursesStats);
+});
+
+exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
+	const { name, specialty, department, level, program } = req.body;
+	const searchData = { name, specialty, department, level, program };
+
+	// making the search obj
+	let search = { name, levels: [level], specialty };
+	for (let key in search) {
+		if (search[key] === '' || search[key] === undefined) delete search[key];
+		if (level === undefined) delete search['levels'];
+	}
+
+	// Specialty || Get all specialties as an array from a given department
+	let specialties;
+	if (department !== '' && department !== undefined) {
+		specialties = await Specialty.find({ department });
+		specialties = specialties.map((spec) => `${spec._id}`);
+
+		//add the specialties to the search object
+		search = {
+			...search,
+			specialty: {
+				$in: [
+					...specialties,
+					search?.specialty !== undefined ? search?.specialty : null,
+				],
+			},
+		};
+	}
+
+	//Department || Get all specialties as an array from a given program
+	let departments;
+	if (program !== '' && program !== undefined) {
+		//get all departments as an array
+		departments = await Department.find({ program });
+		departments = departments.map((dep) => `${dep._id}`);
+
+		//get all specialties as an array.
+		specialties = await Specialty.find({ department: { $in: departments } });
+		specialties = specialties.map((spec) => `${spec._id}`);
+
+		//add the specialties to the search object
+		search = {
+			...search,
+			specialty: {
+				$in: [
+					...specialties,
+					search?.specialty !== undefined ? search?.specialty : null,
+				],
+			},
+		};
+	}
+
+	// make provision for insensitive search fo name if it exist
+	if (name !== '' && name !== undefined) {
+		let regex = new RegExp(name, 'i');
+		search.name = { $regex: regex };
+	}
+
+	let courses = await Course.find({ $or: [search] }).sort({
+		level: 1,
+		name: 1,
+		specialty: 1,
+	});
+
+	console.log(courses, search);
+
+	sendResponse(res, 'success', 200, courses);
 });

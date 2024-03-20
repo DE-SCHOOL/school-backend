@@ -65,4 +65,12 @@ router
 		courseController.primaryCoursesStatistics
 	);
 
+router
+	.route('/search-courses/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo('admin'),
+		courseController.getCoursesPerSearch
+	);
+
 module.exports = router;
