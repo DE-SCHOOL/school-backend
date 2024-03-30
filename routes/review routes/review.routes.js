@@ -17,6 +17,7 @@ router
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		reviewController.getAllReview
 	);
+router.route('/many').post(reviewController.createManyReviews);
 
 router
 	.route('/many/:tokenID')
