@@ -14,6 +14,10 @@ const studentRouter = require('./routes/student routes/student.routes');
 const courseRouter = require('./routes/course routes/course.routes');
 const staffCourseRouter = require('./routes/staff_course routes/staff_course.routes');
 const markRouter = require('./routes/mark routes/mark.routes');
+const attendanceRouter = require('./routes/attendance routes/attendance.routes');
+const questionCategoryRouter = require('./routes/question routes/question_category.routes');
+const questionRouter = require('./routes/question routes/question.routes');
+const reviewRouter = require('./routes/review routes/review.routes');
 
 const app = express();
 
@@ -42,6 +46,10 @@ app.use('/api/v1/student', studentRouter);
 app.use('/api/v1/course', courseRouter);
 app.use('/api/v1/staff-course', staffCourseRouter);
 app.use('/api/v1/mark', markRouter);
+app.use('/api/v1/attendance', attendanceRouter);
+app.use('/api/v1/question-category', questionCategoryRouter);
+app.use('/api/v1/question', questionRouter);
+app.use('/api/v1/review', reviewRouter);
 
 app.all('*', (req, res, next) => {
 	const statusCode = 404;
