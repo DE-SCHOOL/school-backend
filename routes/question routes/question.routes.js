@@ -5,6 +5,8 @@ const questionController = require('./../../controllers/question controller/ques
 
 const router = express.Router();
 
+router.route('/').get(questionController.getAllQuestions);
+
 router
 	.route('/:tokenID')
 	.post(
