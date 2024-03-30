@@ -7,6 +7,8 @@ const router = express.Router();
 
 // router.use(authController.protect);
 
+router.route('/').get(staffCourseController.getStaffCourse);
+
 router
 	.route('/:tokenID')
 	.get(

@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 
 // router.use(authController.protect);
+router.route('/').get(programController.getPrograms);
 
 router
 	.route('/:tokenID')
