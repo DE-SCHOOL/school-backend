@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const determineGrade = require('../utilities/determinGrade');
+const determineGradePoint = require('../utilities/determineGradePoint');
 
 const markSchema = new mongoose.Schema(
 	{
@@ -75,9 +77,28 @@ markSchema.pre(/^find/, function (next) {
 
 //Defining virtual fields to calculate the credit earned, total marks, grade point, wighted point, grade and GPA
 markSchema.virtual('s1Total').get(function () {
+	if (
+		this.course?.levels.includes(300) &&
+		(this.mock !== 0 || this.preMock !== 0)
+	) {
+		let mark = this.mock !== 0 ? this.mock : this.preMock;
+
+		this.s1CA = (0.3 * mark).toFixed(2);
+		this.s1Exam = (0.7 * mark).toFixed(2);
+	}
 	return this.s1CA + this.s1Exam;
 });
 markSchema.virtual('s2Total').get(function () {
+	if (
+		// this.course?.levels.includes(300) &&
+		this.mock !== 0 ||
+		this.preMock !== 0
+	) {
+		let mark = this.mock !== 0 ? this.mock : this.preMock;
+
+		this.s2CA = (0.3 * mark).toFixed(2);
+		this.s2Exam = (0.7 * mark).toFixed(2);
+	}
 	return this.s2CA + this.s2Exam;
 });
 
@@ -97,78 +118,18 @@ markSchema.virtual('s2CreditEarned').get(function () {
 
 //Grade point
 markSchema.virtual('s1GradePoint').get(function () {
-	if (this.s1Total >= 80) {
-		return 4;
-	} else if (this.s1Total >= 70 && this.s1Total < 80) {
-		return 3.5;
-	} else if (this.s1Total >= 60 && this.s1Total < 70) {
-		return 3;
-	} else if (this.s1Total >= 55 && this.s1Total < 60) {
-		return 2.5;
-	} else if (this.s1Total >= 50 && this.s1Total < 55) {
-		return 2;
-	} else if (this.s1Total >= 40 && this.s1Total < 50) {
-		return 1;
-	} else if (this.s1Total < 40) {
-		return 0;
-	}
+	return determineGradePoint(this.s1Total);
 });
 markSchema.virtual('s2GradePoint').get(function () {
-	if (this.s2Total >= 80) {
-		return 4;
-	} else if (this.s2Total >= 70 && this.s2Total < 80) {
-		return 3.5;
-	} else if (this.s2Total >= 60 && this.s2Total < 70) {
-		return 3;
-	} else if (this.s2Total >= 55 && this.s2Total < 60) {
-		return 2.5;
-	} else if (this.s2Total >= 50 && this.s2Total < 55) {
-		return 2;
-	} else if (this.s2Total >= 40 && this.s2Total < 50) {
-		return 1;
-	} else if (this.s2Total < 40) {
-		return 0;
-	}
+	return determineGradePoint(this.s2Total);
 });
 
 //Grade
 markSchema.virtual('s1Grade').get(function () {
-	if (this.s1Total >= 80) {
-		return 'A';
-	} else if (this.s1Total >= 70 && this.s1Total < 80) {
-		return 'B+';
-	} else if (this.s1Total >= 60 && this.s1Total < 70) {
-		return 'B';
-	} else if (this.s1Total >= 55 && this.s1Total < 60) {
-		return 'C+';
-	} else if (this.s1Total >= 50 && this.s1Total < 55) {
-		return 'C';
-	} else if (this.s1Total >= 45 && this.s1Total < 50) {
-		return 'D+';
-	} else if (this.s1Total >= 40 && this.s1Total < 45) {
-		return 'D';
-	} else if (this.s1Total < 40) {
-		return 'F';
-	}
+	return determineGrade(this.s1Total);
 });
 markSchema.virtual('s2Grade').get(function () {
-	if (this.s2Total >= 80) {
-		return 'A';
-	} else if (this.s2Total >= 70 && this.s2Total < 80) {
-		return 'B+';
-	} else if (this.s2Total >= 60 && this.s2Total < 70) {
-		return 'B';
-	} else if (this.s2Total >= 55 && this.s2Total < 60) {
-		return 'C+';
-	} else if (this.s2Total >= 50 && this.s2Total < 55) {
-		return 'C';
-	} else if (this.s2Total >= 45 && this.s2Total < 50) {
-		return 'D+';
-	} else if (this.s2Total >= 40 && this.s2Total < 45) {
-		return 'D';
-	} else if (this.s2Total < 40) {
-		return 'F';
-	}
+	return determineGrade(this.s2Total);
 });
 
 //Weighted points
