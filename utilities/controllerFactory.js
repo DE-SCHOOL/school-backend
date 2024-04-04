@@ -111,7 +111,7 @@ exports.calcStatsPerCourse = async (
 		totalOffering: courseMarkInfo.length,
 		totalSat,
 		percentPassed: 1 * ((totalPassed / totalSat) * 100).toFixed(1) || 0,
-		percentFailed: (100 - (totalPassed / totalSat) * 100).toFixed(1) || 0,
+		percentFailed: 1 * (100 - (totalPassed / totalSat) * 100).toFixed(1) || 0,
 		totalAs,
 		totalBplus,
 		totalBs,

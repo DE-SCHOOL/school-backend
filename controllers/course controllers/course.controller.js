@@ -207,7 +207,7 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 		specialty: 1,
 	});
 
-	console.log(courses, search);
+	// console.log(courses, search);
 
 	sendResponse(res, 'success', 200, courses);
 });
