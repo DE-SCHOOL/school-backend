@@ -211,3 +211,36 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, courses);
 });
+exports.getCoursesResit = catchAsync(async (req, res, next) => {
+	const semester = req.params.semester;
+	const failedMarks = await Mark.aggregate([
+		{
+			$addFields: {
+				total: { $sum: [`$${semester}CA`, `$${semester}Exam`] },
+			},
+		},
+		{
+			$lookup: {
+				from: 'courses',
+				localField: 'course',
+				foreignField: '_id',
+				as: 'course',
+			},
+		},
+		{
+			$lookup: {
+				from: 'students',
+				localField: 'student',
+				foreignField: '_id',
+				as: 'student',
+			},
+		},
+		{
+			$match: {
+				total: { $lt: 40 },
+			},
+		},
+	]);
+
+	sendResponse(res, 'Success', 200, failedMarks);
+});
