@@ -11,5 +11,8 @@ router
 router
 	.route('/:id/:tokenID')
 	.patch(authController.protect, AcademicYear.updateAcademicYears);
+router
+	.route('/current/:tokenID')
+	.get(authController.protect, AcademicYear.getCurrentYear);
 
 module.exports = router;
