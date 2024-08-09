@@ -31,3 +31,8 @@ exports.updateAcademicYears = catchAsync(async (req, res, next) => {
 
 	sendResponse(res, 'success', 200, newUpdate);
 });
+
+exports.getCurrentYear = catchAsync(async (req, res, next) => {
+	const currentYear = await AcademicYear.findOne({ isCurrent: true });
+	sendResponse(res, 'success', 200, currentYear);
+});
