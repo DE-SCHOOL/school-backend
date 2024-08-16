@@ -19,4 +19,7 @@ router
 	.route('/:academicYearID/promote-student/:tokenID')
 	.post(authController.protect, StudentAcademicYear.promoteStudent);
 
+router
+	.route('/:academicYearID/bulk-promote/:tokenID')
+	.post(authController.protect, StudentAcademicYear.promoteStudentsBulk);
 module.exports = router;
