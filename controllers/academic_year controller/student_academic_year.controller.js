@@ -5,18 +5,18 @@ const catchAsync = require('./../../utilities/catchAsync');
 const Student = require('../../models/students.model');
 
 exports.createStudentAcademicYearBulk = catchAsync(async (req, res, next) => {
-	const { studentIDs, toYearID } = req.body;
+	const { students, toYearID } = req.body;
 
-	console.log(studentIDs);
-	if (!studentIDs || studentIDs.length === 0) {
+	if (!students || students.length === 0) {
 		return next(new ErrorAPI('Please provide students to be promoted', 400));
 	}
 
 	let studentAcademicYear = [];
-	for (i = 0; i < studentIDs.length; i++) {
+	for (i = 0; i < students.length; i++) {
 		studentAcademicYear[i] = await StudentAcademicYear.create({
-			student: studentIDs[i],
+			student: students[i]._id,
 			academicYear: toYearID,
+			level: students[i].level,
 		});
 	}
 
@@ -42,6 +42,7 @@ exports.promoteStudent = catchAsync(async (req, res, next) => {
 	const studentAcademicYear = await StudentAcademicYear.create({
 		student: studentID,
 		academicYear: toYear,
+		level: newClass,
 	});
 
 	const students = await StudentAcademicYear.find({ academicYear }).populate(
@@ -76,6 +77,7 @@ exports.promoteStudentsBulk = catchAsync(async (req, res, next) => {
 		await StudentAcademicYear.create({
 			student: students[i].studentID,
 			academicYear: students[i].toYear,
+			level: students[i].newClass,
 		});
 	}
 
@@ -83,7 +85,11 @@ exports.promoteStudentsBulk = catchAsync(async (req, res, next) => {
 		academicYear,
 	}).populate('student');
 
-	let allStudents = studentsData.map((stud) => stud.student);
+	let allStudents = studentsData.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
+	});
 
 	sendResponse(res, 'success', 201, allStudents);
 });
@@ -95,7 +101,13 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 		'student'
 	);
 
-	let allStudents = students.map((stud) => stud.student);
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
+	});
+
+	// console.log(allStudents, 'JASIO');
 
 	sendResponse(res, 'success', 200, allStudents);
 });
