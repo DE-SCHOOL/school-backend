@@ -75,7 +75,7 @@ router
 
 router
 	.route('/resit/:semester/:tokenID')
-	.get(
+	.post(
 		authController.protect,
 		authController.restrictTo('admin'),
 		courseController.getCoursesResit
