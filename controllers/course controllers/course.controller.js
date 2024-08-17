@@ -212,7 +212,8 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, courses);
 });
 exports.getCoursesResit = catchAsync(async (req, res, next) => {
-	const semester = req.params.semester;
+	const { semester } = req.params;
+	const { academicYear } = req.body;
 	const failedMarks = await Mark.aggregate([
 		{
 			$addFields: {
@@ -238,6 +239,7 @@ exports.getCoursesResit = catchAsync(async (req, res, next) => {
 		{
 			$match: {
 				total: { $lt: 40 },
+				academicYear,
 			},
 		},
 	]);
