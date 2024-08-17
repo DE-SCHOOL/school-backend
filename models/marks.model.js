@@ -63,7 +63,16 @@ const markSchema = new mongoose.Schema(
 //Setting student as an index without using unique:true in modelSchema definition
 // markSchema.index({student: 1}) 1 for ascending order and -1 for descending order
 
-//Setting a composite key combination of student and course ids
+//Setting a composite key combination of student and course ids then academicYear
+markSchema.post('init', async function () {
+	try {
+		await this.collection.dropIndex('course_1_student_1');
+		console.log('Old index dropped');
+	} catch (error) {
+		console.log('Error dropping index (may not exist):', error.message);
+	}
+});
+
 markSchema.index({ course: 1, student: 1 }, { unique: true });
 
 markSchema.pre(/^find/, function (next) {
@@ -78,8 +87,9 @@ markSchema.pre(/^find/, function (next) {
 //Defining virtual fields to calculate the credit earned, total marks, grade point, wighted point, grade and GPA
 markSchema.virtual('s1Total').get(function () {
 	if (
-		this.course?.levels.includes(300) &&
-		(this.mock !== 0 || this.preMock !== 0)
+		// this.course?.levels.includes(300) &&
+		this.mock !== 0 ||
+		this.preMock !== 0
 	) {
 		let mark = this.mock !== 0 ? this.mock : this.preMock;
 
