@@ -9,14 +9,18 @@ exports.createStudentsMark = catchAsync(async (req, res, next) => {
 	const { courseID } = req.params;
 	const { students, academicYear } = req.body;
 
+	console.log('---------------------------', students, academicYear);
 	let studentsMark = [];
 	for (let i = 0; i < students.length; i++) {
 		studentsMark[i] = await Mark.create({
 			course: courseID,
 			student: students[i],
-			academicYear: '2023/2024',
+			academicYear,
+			// academicYear: '2023/2024',
 		});
 	}
+
+	console.log('STTTTTTTT', studentsMark);
 
 	studentsMark.sort((a, b) => {
 		const nameA = a.student.name?.toUpperCase();
@@ -42,11 +46,14 @@ exports.getAllStudentsMarkSheet = catchAsync(async (req, res, next) => {
 exports.getMarkSheetsPerCoursePerStudents = catchAsync(
 	async (req, res, next) => {
 		const course = req.params.courseID;
-		const { students } = req.body;
+		const { students, academicYear } = req.body;
 		const studentsMarksheet = await Mark.find({
 			course,
 			student: { $in: students },
+			academicYear,
 		});
+
+		console.log('Jeff', studentsMarksheet, students, academicYear);
 
 		studentsMarksheet.sort((a, b) => {
 			const nameA = a.student.name?.toUpperCase();
@@ -153,14 +160,17 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 				return course._id;
 			});
 		});
-		// console.log(courses, myCourse2D);
 
 		//Find student results based on his/her courses and academicYear
 		let j = 0;
+		// let allSearch = [];
 		let results = studIDs.map(async (studID) => {
 			let search = { student: studID, academicYear, course: myCourse2D[j] };
+
+			let query = await Mark.find(search);
 			j = j + 1;
-			return await Mark.find(search);
+
+			return query;
 		});
 
 		let allValues = await Promise.all(results);
