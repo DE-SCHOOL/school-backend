@@ -93,7 +93,6 @@ exports.getCoursesPerSpecialtyPerLevel = catchAsync(async (req, res, next) => {
 	const { level } = req.body;
 	let courses = await Course.find({ specialty: `${id}`, levels: level });
 
-	// console.log(courses);
 
 	if (!courses) courses = [];
 
