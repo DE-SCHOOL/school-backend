@@ -5,6 +5,9 @@ const StudentAcademicYear = require('./../../controllers/academic_year controlle
 const router = express.Router();
 
 router
+	.route('/:nextAcademicYearID/:tokenID')
+	.delete(authController.protect, StudentAcademicYear.deletePromotedStudent);
+router
 	.route('/bulk-insert/:tokenID')
 	.post(
 		authController.protect,
