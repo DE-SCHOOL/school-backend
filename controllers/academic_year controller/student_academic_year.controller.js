@@ -24,6 +24,46 @@ exports.createStudentAcademicYearBulk = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 201, []);
 });
 
+exports.deletePromotedStudent = catchAsync(async (req, res, next) => {
+	const { studentID, newClass, currentYearID } = req.body;
+	const { nextAcademicYearID } = req.params;
+
+	if (!studentID || !nextAcademicYearID)
+		return new ErrorAPI(
+			'Please provide student information and academic year inforation',
+			400
+		);
+
+	await Student.findByIdAndUpdate(
+		studentID,
+		{
+			level: newClass,
+		},
+		{ new: true, runValidators: true }
+	);
+
+	await StudentAcademicYear.deleteOne({
+		academicYear: nextAcademicYearID,
+		student: studentID,
+	});
+
+	const students = await StudentAcademicYear.find({
+		academicYear: currentYearID,
+	})
+		.populate('student')
+		.sort({ level: 1 });
+
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
+	});
+
+	sendResponse(res, 'success', 200, allStudents); //normally deleted is 204
+
+	// sendResponse(res, 'success', 200, []);
+});
+
 exports.promoteStudent = catchAsync(async (req, res, next) => {
 	const { studentID, toYear, newClass } = req.body;
 	const academicYear = req.params.academicYearID;
@@ -40,17 +80,23 @@ exports.promoteStudent = catchAsync(async (req, res, next) => {
 		{ new: true, runValidators: true }
 	);
 
-	const studentAcademicYear = await StudentAcademicYear.create({
+	await StudentAcademicYear.create({
 		student: studentID,
 		academicYear: toYear,
 		level: newClass,
 	});
 
-	const students = await StudentAcademicYear.find({ academicYear }).populate(
-		'student'
-	);
+	const students = await StudentAcademicYear.find({
+		academicYear,
+	})
+		.populate('student')
+		.sort({ level: 1 });
 
-	let allStudents = students.map((stud) => stud.student);
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
+	});
 
 	sendResponse(res, 'success', 201, allStudents);
 });
