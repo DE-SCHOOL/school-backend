@@ -30,11 +30,6 @@ router
 
 router
 	.route('/:id/:tokenID')
-	.get(
-		authController.protect,
-		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
-		studentController.getStudent
-	)
 	.patch(
 		authController.protect,
 		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_STAFF),
@@ -44,6 +39,14 @@ router
 		authController.protect,
 		authController.restrictTo('admin'),
 		studentController.deleteStudent
+	);
+
+router
+	.route('/:id/academic-year/:academicYearID/:tokenID')
+	.get(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_STAFF),
+		studentController.getStudent
 	);
 
 router.get(
