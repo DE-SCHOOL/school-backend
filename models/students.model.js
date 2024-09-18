@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const studentSchema = new mongoose.Schema({
 	name: {
@@ -51,6 +52,15 @@ const studentSchema = new mongoose.Schema({
 			message: 'Invalid Phone number for student',
 		},
 	},
+	password: {
+		type: String,
+		default: null,
+		validate: {
+			validator: (val) => val.length >= 8,
+			message: 'Password must be at least 8 characters',
+		},
+		select: false,
+	},
 	parent_name: {
 		type: String,
 		required: [true, 'Parent name must be provided'],
@@ -99,6 +109,21 @@ studentSchema.pre(/^find/, function (next) {
 	this.populate('specialty', 'name');
 	next();
 });
+
+studentSchema.pre('save', async function (next) {
+	if (this.isModified('password')) {
+		const saltRounds = 12;
+		const hash = await bcrypt.hash(this.password, saltRounds);
+		this.password = hash;
+	}
+
+	next();
+});
+
+studentSchema.methods.isPasswordCorrect = async function (plainPassword, hash) {
+	const isCorrect = await bcrypt.compare(plainPassword, hash);
+	return isCorrect;
+};
 
 const Student = mongoose.model('student', studentSchema);
 module.exports = Student;
