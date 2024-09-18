@@ -259,6 +259,35 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, allStudents);
 });
 
+exports.getStudentAccrossYears = catchAsync(async (req, res, next) => {
+	const { studentId } = req.params;
+
+	const student = await StudentAcademicYear.aggregate([
+		{
+			$match: { student: new mongoose.Types.ObjectId(studentId) },
+		},
+		{
+			$lookup: {
+				from: 'academic_years',
+				localField: 'academicYear',
+				foreignField: '_id',
+				as: 'academicYear',
+			},
+		},
+		{
+			$project: {
+				level: 1,
+				'academicYear.isCurrent': 1,
+				'academicYear.schoolYear': 1,
+			},
+		},
+	]);
+
+	if (!student) return new ErrorAPI('Student Not Found!', 404);
+
+	sendResponse(res, 'success', 200, student);
+});
+
 // {
 // 	$project: {
 // 			level: 1,
