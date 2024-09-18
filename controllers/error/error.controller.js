@@ -46,6 +46,10 @@ module.exports = (err, req, res, next) => {
 			error.message = err.message.split(':')[2];
 			error.isOperational = true;
 		}
+		if (err.name === 'CastError' && err?.path === '_id') {
+			error.isOperational = true;
+			error.message = 'Invalid Student Code';
+		}
 
 		sendErrorProd(error, statusCode, res);
 	}
