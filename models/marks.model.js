@@ -73,7 +73,8 @@ markSchema.post('init', async function () {
 	}
 });
 
-markSchema.index({ course: 1, student: 1 }, { unique: true });
+// markSchema.index({ course: 1, student: 1 }, { unique: true });
+markSchema.index({ course: 1, student: 1, academicYear: 1 }, { unique: true });
 
 markSchema.pre(/^find/, function (next) {
 	this.populate('course', 'name code credit_value status levels').populate(
