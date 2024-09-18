@@ -360,7 +360,7 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 	// 	specialty: { $in: courseInfo },
 	// 	level: { $in: level },
 	// });
-
+	
 	const students = await StudentAcademicYear.aggregate([
 		{ $match: { academicYear: new mongoose.Types.ObjectId(academicYearID) } },
 		{
