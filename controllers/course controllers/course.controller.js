@@ -90,9 +90,13 @@ exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
 
 exports.getCoursesPerSpecialtyPerLevel = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	const { level } = req.body;
-	let courses = await Course.find({ specialty: `${id}`, levels: level });
-
+	const { level, semester } = req.body;
+	const dataSearch = { specialty: `${id}`, levels: level };
+	if (semester) {
+		dataSearch.semester = semester;
+	}
+	console.log(dataSearch);
+	let courses = await Course.find(dataSearch);
 
 	if (!courses) courses = [];
 
