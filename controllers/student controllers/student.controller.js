@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const sendResponse = require('../../utilities/sendResponse');
 const Student = require('./../../models/students.model');
 const Course = require('./../../models/courses.model');
@@ -6,6 +7,7 @@ const Department = require('./../../models/department.model');
 const Program = require('./../../models/programs.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const catchAsync = require('./../../utilities/catchAsync');
+const StudentAcademicYear = require('./../../models/student_academic_year.model');
 
 const StaffCourse = require('./../../models/staff_courses.model');
 
@@ -26,6 +28,7 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 		entry_certificate,
 		pob,
 	} = req.body;
+	const { academicYearID } = req.params;
 
 	const student = await Student.create({
 		name,
@@ -42,6 +45,12 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 		level,
 		entry_certificate,
 		pob,
+	});
+
+	await StudentAcademicYear.create({
+		student: student?._id,
+		academicYear: academicYearID,
+		level: level,
 	});
 
 	if (!student) return next(new ErrorApi('Student not created', 400));
@@ -63,14 +72,121 @@ exports.editStudent = catchAsync(async (req, res, next) => {
 });
 
 exports.getStudent = catchAsync(async (req, res, next) => {
-	const { id } = req.params;
+	const { id, academicYearID } = req.params;
 
-	const student = await Student.findById(id);
+	if (!id || !academicYearID) {
+		return next(new ErrorApi('Please provide student and academic year', 400));
+	}
 
-	if (!student)
-		return next(new ErrorApi('Student not found with this ID', 404));
+	const students = await StudentAcademicYear.aggregate([
+		{
+			$match: {
+				academicYear: new mongoose.Types.ObjectId(academicYearID),
+				student: new mongoose.Types.ObjectId(id),
+			},
+		},
+		{
+			$lookup: {
+				from: 'students',
+				localField: 'student',
+				foreignField: '_id',
+				as: 'student',
+			},
+		},
+		{ $unwind: '$student' },
+		{
+			$lookup: {
+				from: 'specialties',
+				localField: 'student.specialty',
+				foreignField: '_id',
+				as: 'student.specialty',
+			},
+		},
+		{ $unwind: '$student.specialty' },
+		{
+			$lookup: {
+				from: 'departments',
+				localField: 'student.specialty.department',
+				foreignField: '_id',
+				as: 'student.specialty.department',
+			},
+		},
+		{ $unwind: '$student.specialty.department' },
+		{
+			$lookup: {
+				from: 'programs',
+				localField: 'student.specialty.department.program',
+				foreignField: '_id',
+				as: 'student.specialty.department.program',
+			},
+		},
+		{ $unwind: '$student.specialty.department.program' },
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.director',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.director',
+			},
+		},
+		{ $unwind: '$student.specialty.department.program.director' },
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.deputyDirector',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.deputyDirector',
+			},
+		},
+		{
+			$unwind: '$student.specialty.department.program.deputyDirector',
+		},
+		{
+			$project: {
+				level: 1,
+				'student._id': 1,
+				'student.name': 1,
+				'student.matricule': 1,
+				'student.address': 1,
+				'student.gender': 1,
+				'student.dob': 1,
+				'student.pob': 1,
+				'student.email': 1,
+				'student.tel': 1,
+				'student.parent_name': 1,
+				'student.parent_email': 1,
+				'student.parent_tel': 1,
+				'student.level': 1,
+				'student.entry_certificate': 1,
+				// 'student.specialty': 1,
+				'student.specialty.name': 1,
+				'student.specialty._id': 1,
+				// 'student.specialty.department': 1,
+				'student.specialty.department.name': 1,
+				'student.specialty.department._id': 1,
+				// 'student.specialty.department.hod': 1,
+				// 'student.specialty.department.hod.name': 1,
+				// 'student.specialty.department.hod._id': 1,
+				// 'student.specialty.department.program': 1,
+				'student.specialty.department.program.name': 1,
+				'student.specialty.department.program._id': 1,
+				'student.specialty.department.program.director.name': 1,
+				'student.specialty.department.program.director._id': 1,
+				'student.specialty.department.program.deputyDirector.name': 1,
+				'student.specialty.department.program.deputyDirector._id': 1,
+			},
+		},
+	]);
 
-	sendResponse(res, 'success', 200, student);
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
+	});
+
+	allStudents = allStudents.length > 0 ? allStudents[0] : [];
+
+	sendResponse(res, 'success', 201, allStudents);
 });
 
 exports.getAllStudents = catchAsync(async (req, res, next) => {
@@ -83,6 +199,121 @@ exports.getAllStudents = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, students);
 });
 
+exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
+	const { academicYearID } = req.params;
+
+	// const students = await StudentAcademicYear.find({
+	// 	academicYear: academicYearID,
+	// })
+	// 	.sort({ level: 1 })
+	// 	.populate('student');
+
+	const students = await StudentAcademicYear.aggregate([
+		{ $match: { academicYear: new mongoose.Types.ObjectId(academicYearID) } },
+		{
+			$lookup: {
+				from: 'students',
+				localField: 'student',
+				foreignField: '_id',
+				as: 'student',
+			},
+		},
+		{ $unwind: '$student' },
+		{
+			$lookup: {
+				from: 'specialties',
+				localField: 'student.specialty',
+				foreignField: '_id',
+				as: 'student.specialty',
+			},
+		},
+		{ $unwind: '$student.specialty' },
+		{
+			$lookup: {
+				from: 'departments',
+				localField: 'student.specialty.department',
+				foreignField: '_id',
+				as: 'student.specialty.department',
+			},
+		},
+		{ $unwind: '$student.specialty.department' },
+		{
+			$lookup: {
+				from: 'programs',
+				localField: 'student.specialty.department.program',
+				foreignField: '_id',
+				as: 'student.specialty.department.program',
+			},
+		},
+		{ $unwind: '$student.specialty.department.program' },
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.director',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.director',
+			},
+		},
+		{ $unwind: '$student.specialty.department.program.director' },
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.deputyDirector',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.deputyDirector',
+			},
+		},
+		{
+			$unwind: '$student.specialty.department.program.deputyDirector',
+		},
+		{
+			$project: {
+				level: 1,
+				'student._id': 1,
+				'student.name': 1,
+				'student.matricule': 1,
+				'student.address': 1,
+				'student.gender': 1,
+				'student.dob': 1,
+				'student.pob': 1,
+				'student.email': 1,
+				'student.tel': 1,
+				'student.parent_name': 1,
+				'student.parent_email': 1,
+				'student.parent_tel': 1,
+				'student.level': 1,
+				'student.entry_certificate': 1,
+				// 'student.specialty': 1,
+				'student.specialty.name': 1,
+				'student.specialty._id': 1,
+				// 'student.specialty.department': 1,
+				'student.specialty.department.name': 1,
+				'student.specialty.department._id': 1,
+				// 'student.specialty.department.hod': 1,
+				// 'student.specialty.department.hod.name': 1,
+				// 'student.specialty.department.hod._id': 1,
+				// 'student.specialty.department.program': 1,
+				'student.specialty.department.program.name': 1,
+				'student.specialty.department.program._id': 1,
+				'student.specialty.department.program.director.name': 1,
+				'student.specialty.department.program.director._id': 1,
+				'student.specialty.department.program.deputyDirector.name': 1,
+				'student.specialty.department.program.deputyDirector._id': 1,
+			},
+		},
+		{ $sort: { level: 1, 'student.name': 1 } },
+	]);
+
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
+	});
+
+	// console.log(allStudents, 'JASIO');
+
+	sendResponse(res, 'success', 200, allStudents);
+});
 exports.getStudentsPerStaff = catchAsync(async (req, res, next) => {
 	const myID = req.params.staffID;
 
@@ -114,7 +345,7 @@ exports.getStudentsPerStaff = catchAsync(async (req, res, next) => {
 });
 
 exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
-	const { courseID } = req.params;
+	const { courseID, academicYearID } = req.params;
 
 	const course = await Course.findById(courseID);
 
@@ -125,12 +356,121 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 
 	const level = course.levels;
 
-	const students = await Student.find({
-		specialty: { $in: courseInfo },
-		level: { $in: level },
+	// const students = await Student.find({
+	// 	specialty: { $in: courseInfo },
+	// 	level: { $in: level },
+	// });
+	
+	const students = await StudentAcademicYear.aggregate([
+		{ $match: { academicYear: new mongoose.Types.ObjectId(academicYearID) } },
+		{
+			$lookup: {
+				from: 'students',
+				localField: 'student',
+				foreignField: '_id',
+				as: 'student',
+			},
+		},
+		{ $unwind: '$student' },
+		{
+			$lookup: {
+				from: 'specialties',
+				localField: 'student.specialty',
+				foreignField: '_id',
+				as: 'student.specialty',
+			},
+		},
+		{ $unwind: '$student.specialty' },
+		//Another match for all students in the array of specialties and array of levels
+		{
+			$match: {
+				level: { $in: level },
+				'student.specialty._id': { $in: courseInfo },
+			},
+		},
+		{
+			$lookup: {
+				from: 'departments',
+				localField: 'student.specialty.department',
+				foreignField: '_id',
+				as: 'student.specialty.department',
+			},
+		},
+		{ $unwind: '$student.specialty.department' },
+		{
+			$lookup: {
+				from: 'programs',
+				localField: 'student.specialty.department.program',
+				foreignField: '_id',
+				as: 'student.specialty.department.program',
+			},
+		},
+		{ $unwind: '$student.specialty.department.program' },
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.director',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.director',
+			},
+		},
+		{ $unwind: '$student.specialty.department.program.director' },
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.deputyDirector',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.deputyDirector',
+			},
+		},
+		{
+			$unwind: '$student.specialty.department.program.deputyDirector',
+		},
+		{
+			$project: {
+				level: 1,
+				'student._id': 1,
+				'student.name': 1,
+				'student.matricule': 1,
+				'student.address': 1,
+				'student.gender': 1,
+				'student.dob': 1,
+				'student.pob': 1,
+				'student.email': 1,
+				'student.tel': 1,
+				'student.parent_name': 1,
+				'student.parent_email': 1,
+				'student.parent_tel': 1,
+				'student.level': 1,
+				'student.entry_certificate': 1,
+				// 'student.specialty': 1,
+				'student.specialty.name': 1,
+				'student.specialty._id': 1,
+				// 'student.specialty.department': 1,
+				'student.specialty.department.name': 1,
+				'student.specialty.department._id': 1,
+				// 'student.specialty.department.hod': 1,
+				// 'student.specialty.department.hod.name': 1,
+				// 'student.specialty.department.hod._id': 1,
+				// 'student.specialty.department.program': 1,
+				'student.specialty.department.program.name': 1,
+				'student.specialty.department.program._id': 1,
+				'student.specialty.department.program.director.name': 1,
+				'student.specialty.department.program.director._id': 1,
+				'student.specialty.department.program.deputyDirector.name': 1,
+				'student.specialty.department.program.deputyDirector._id': 1,
+			},
+		},
+		{ $sort: { level: 1, 'student.name': 1 } },
+	]);
+
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
 	});
 
-	sendResponse(res, 'success', 200, students);
+	sendResponse(res, 'success', 200, allStudents);
 });
 
 exports.getStudentPerSearch = catchAsync(async (req, res, next) => {

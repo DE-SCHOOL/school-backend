@@ -18,6 +18,9 @@ const attendanceRouter = require('./routes/attendance routes/attendance.routes')
 const questionCategoryRouter = require('./routes/question routes/question_category.routes');
 const questionRouter = require('./routes/question routes/question.routes');
 const reviewRouter = require('./routes/review routes/review.routes');
+const academicYearRouter = require('./routes/academic_year routes/academic_year.routes');
+const studentAcademicYearRouter = require('./routes/academic_year routes/student_academic_year.routes');
+const studentAppRouter = require('./routes/mobile routes/mobile.student.routes');
 
 const app = express();
 
@@ -50,6 +53,9 @@ app.use('/api/v1/attendance', attendanceRouter);
 app.use('/api/v1/question-category', questionCategoryRouter);
 app.use('/api/v1/question', questionRouter);
 app.use('/api/v1/review', reviewRouter);
+app.use('/api/v1/academic-year', academicYearRouter);
+app.use('/api/v1/student-academic-year', studentAcademicYearRouter);
+app.use('/api/v1/student-app', studentAppRouter);
 
 app.all('*', (req, res, next) => {
 	const statusCode = 404;

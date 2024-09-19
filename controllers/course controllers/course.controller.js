@@ -90,10 +90,13 @@ exports.getCoursesPerSpecialty = catchAsync(async (req, res, next) => {
 
 exports.getCoursesPerSpecialtyPerLevel = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	const { level } = req.body;
-	let courses = await Course.find({ specialty: `${id}`, levels: level });
-
-	// console.log(courses);
+	const { level, semester } = req.body;
+	const dataSearch = { specialty: `${id}`, levels: level };
+	if (semester) {
+		dataSearch.semester = semester;
+	}
+	console.log(dataSearch);
+	let courses = await Course.find(dataSearch);
 
 	if (!courses) courses = [];
 
@@ -212,7 +215,8 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 	sendResponse(res, 'success', 200, courses);
 });
 exports.getCoursesResit = catchAsync(async (req, res, next) => {
-	const semester = req.params.semester;
+	const { semester } = req.params;
+	const { academicYear } = req.body;
 	const failedMarks = await Mark.aggregate([
 		{
 			$addFields: {
@@ -238,6 +242,7 @@ exports.getCoursesResit = catchAsync(async (req, res, next) => {
 		{
 			$match: {
 				total: { $lt: 40 },
+				academicYear,
 			},
 		},
 	]);

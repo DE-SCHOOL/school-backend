@@ -47,11 +47,13 @@ exports.editQuestion = catchAsync(async (req, res, next) => {
 exports.deleteQuestion = catchAsync(async (req, res, next) => {
 	const { questionID } = req.params;
 
-	const question = await Question.findByIdAndDelete(questionID, {
+	let question = await Question.findByIdAndDelete(questionID, {
 		returnOriginal: false,
 	});
 
 	if (!question) return next(new ErrorApi('No such question', 400));
+
+	question = await Question.find({});
 
 	sendResponse(res, 'success', 204, question);
 });

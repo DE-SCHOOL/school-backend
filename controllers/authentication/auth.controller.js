@@ -41,7 +41,7 @@ exports.register = catchAsync(async (req, res, next) => {
 	staff.password = undefined;
 
 	const id = `${staff._id}`;
-	const token = await createToken(id);
+	const token = await createToken(id, process.env.JWT_SECRET);
 
 	// res.cookie('jwt', token, {
 	// 	httpOnly: true,
@@ -74,7 +74,7 @@ exports.login = catchAsync(async (req, res, next) => {
 	if (!isCorrect)
 		return next(new ErrorApi('Incorrect password, please try again', 401));
 
-	const token = await createToken(`${staff._id}`);
+	const token = await createToken(`${staff._id}`, process.env.JWT_SECRET);
 
 	let cookieOption = {};
 	cookieOption = {
@@ -87,6 +87,7 @@ exports.login = catchAsync(async (req, res, next) => {
 	res.cookie('jwt', token, cookieOption);
 
 	staff._doc.token = token;
+	staff._doc.password = undefined;
 	sendResponse(res, 'success', 200, staff);
 });
 
@@ -105,7 +106,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 			new ErrorApi('No token, please login to be an authorized user', 401)
 		);
 
-	const tokenInfo = await verifyToken(token);
+	const tokenInfo = await verifyToken(token, process.env.JWT_SECRET);
 
 	const userInfo = { ...tokenInfo };
 
