@@ -21,8 +21,7 @@ exports.updateAcademicYears = catchAsync(async (req, res, next) => {
 	const id = req.params.id;
 	const data = await AcademicYear.updateMany(
 		{ isCurrent: true },
-		{ isCurrent: false },
-		{ new: true }
+		{ isCurrent: false }
 	);
 
 	const newUpdate = await AcademicYear.findOneAndUpdate(
