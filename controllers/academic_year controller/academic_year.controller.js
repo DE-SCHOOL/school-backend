@@ -29,6 +29,8 @@ exports.updateAcademicYears = catchAsync(async (req, res, next) => {
 		isCurrent: true,
 	});
 
+	console.log('I passed here to update');
+
 	sendResponse(res, 'success', 200, newUpdate);
 });
 

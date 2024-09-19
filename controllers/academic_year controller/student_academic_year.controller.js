@@ -248,11 +248,25 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 		{ $sort: { level: 1, 'student.name': 1 } },
 	]);
 
+	console.log(students);
+	console.log(
+		students.length,
+		'1---------------------------------------------'
+	);
 	let allStudents = students.map((stud) => {
 		const student = stud.student;
 		student.level = stud.level;
 		return student;
 	});
+
+	console.log(
+		'2----------------------------------------------------------------',
+		allStudents
+	);
+	console.log(
+		allStudents.length,
+		'3---------------------------------------------'
+	);
 
 	// console.log(allStudents, 'JASIO');
 
