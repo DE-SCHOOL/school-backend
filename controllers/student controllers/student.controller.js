@@ -93,7 +93,7 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 				as: 'student',
 			},
 		},
-		{ $unwind: '$student' },
+		{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
 		{
 			$lookup: {
 				from: 'specialties',
@@ -102,7 +102,9 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 				as: 'student.specialty',
 			},
 		},
-		{ $unwind: '$student.specialty' },
+		{
+			$unwind: { path: '$student.specialty', preserveNullAndEmptyArrays: true },
+		},
 		{
 			$lookup: {
 				from: 'departments',
@@ -111,7 +113,12 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department',
 			},
 		},
-		{ $unwind: '$student.specialty.department' },
+		{
+			$unwind: {
+				path: '$student.specialty.department',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'programs',
@@ -120,7 +127,12 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -129,7 +141,12 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program.director',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program.director' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program.director',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -139,7 +156,10 @@ exports.getStudent = catchAsync(async (req, res, next) => {
 			},
 		},
 		{
-			$unwind: '$student.specialty.department.program.deputyDirector',
+			$unwind: {
+				path: '$student.specialty.department.program.deputyDirector',
+				preserveNullAndEmptyArrays: true,
+			},
 		},
 		{
 			$project: {
@@ -218,7 +238,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student',
 			},
 		},
-		{ $unwind: '$student' },
+		{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
 		{
 			$lookup: {
 				from: 'specialties',
@@ -227,7 +247,9 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty',
 			},
 		},
-		{ $unwind: '$student.specialty' },
+		{
+			$unwind: { path: '$student.specialty', preserveNullAndEmptyArrays: true },
+		},
 		{
 			$lookup: {
 				from: 'departments',
@@ -236,7 +258,12 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department',
 			},
 		},
-		{ $unwind: '$student.specialty.department' },
+		{
+			$unwind: {
+				path: '$student.specialty.department',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'programs',
@@ -245,7 +272,12 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -254,7 +286,12 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program.director',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program.director' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program.director',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -264,7 +301,10 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 			},
 		},
 		{
-			$unwind: '$student.specialty.department.program.deputyDirector',
+			$unwind: {
+				path: '$student.specialty.department.program.deputyDirector',
+				preserveNullAndEmptyArrays: true,
+			},
 		},
 		{
 			$project: {
@@ -360,7 +400,7 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 	// 	specialty: { $in: courseInfo },
 	// 	level: { $in: level },
 	// });
-	
+
 	const students = await StudentAcademicYear.aggregate([
 		{ $match: { academicYear: new mongoose.Types.ObjectId(academicYearID) } },
 		{
@@ -371,7 +411,7 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 				as: 'student',
 			},
 		},
-		{ $unwind: '$student' },
+		{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
 		{
 			$lookup: {
 				from: 'specialties',
@@ -380,7 +420,9 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 				as: 'student.specialty',
 			},
 		},
-		{ $unwind: '$student.specialty' },
+		{
+			$unwind: { path: '$student.specialty', preserveNullAndEmptyArrays: true },
+		},
 		//Another match for all students in the array of specialties and array of levels
 		{
 			$match: {
@@ -396,7 +438,12 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department',
 			},
 		},
-		{ $unwind: '$student.specialty.department' },
+		{
+			$unwind: {
+				path: '$student.specialty.department',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'programs',
@@ -405,7 +452,12 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -414,7 +466,12 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program.director',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program.director' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program.director',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -424,7 +481,10 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 			},
 		},
 		{
-			$unwind: '$student.specialty.department.program.deputyDirector',
+			$unwind: {
+				path: '$student.specialty.department.program.deputyDirector',
+				preserveNullAndEmptyArrays: true,
+			},
 		},
 		{
 			$project: {

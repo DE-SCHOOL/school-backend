@@ -151,7 +151,7 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 					as: 'student',
 				},
 			},
-			{ $unwind: '$student' },
+			{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
 			{
 				$lookup: {
 					from: 'academic_years',
@@ -160,7 +160,8 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 					as: 'academicYear',
 				},
 			},
-			{ $unwind: '$academicYear' },
+			{ $unwind: { path: '$academicYear', preserveNullAndEmptyArrays: true } },
+
 			{
 				$match: { 'academicYear.schoolYear': academicYear },
 			},
@@ -172,7 +173,13 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 					as: 'student.specialty',
 				},
 			},
-			{ $unwind: '$student.specialty' },
+			{
+				$unwind: {
+					path: '$student.specialty',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+
 			{
 				$lookup: {
 					from: 'departments',
@@ -181,7 +188,13 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 					as: 'student.specialty.department',
 				},
 			},
-			{ $unwind: '$student.specialty.department' },
+			{
+				$unwind: {
+					path: '$student.specialty.department',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
+
 			{
 				$lookup: {
 					from: 'programs',
@@ -190,7 +203,12 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 					as: 'student.specialty.department.program',
 				},
 			},
-			{ $unwind: '$student.specialty.department.program' },
+			{
+				$unwind: {
+					path: '$student.specialty.department.program',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
 			{
 				$lookup: {
 					from: 'staffs',
@@ -199,7 +217,12 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 					as: 'student.specialty.department.program.director',
 				},
 			},
-			{ $unwind: '$student.specialty.department.program.director' },
+			{
+				$unwind: {
+					path: '$student.specialty.department.program.director',
+					preserveNullAndEmptyArrays: true,
+				},
+			},
 			{
 				$lookup: {
 					from: 'staffs',
@@ -209,7 +232,10 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 				},
 			},
 			{
-				$unwind: '$student.specialty.department.program.deputyDirector',
+				$unwind: {
+					path: '$student.specialty.department.program.deputyDirector',
+					preserveNullAndEmptyArrays: true,
+				},
 			},
 			{
 				$project: {
