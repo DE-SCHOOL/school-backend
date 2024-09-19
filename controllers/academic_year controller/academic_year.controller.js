@@ -25,9 +25,13 @@ exports.updateAcademicYears = catchAsync(async (req, res, next) => {
 		{ new: true }
 	);
 
-	const newUpdate = await AcademicYear.findByIdAndUpdate(id, {
-		isCurrent: true,
-	});
+	const newUpdate = await AcademicYear.findOneAndUpdate(
+		{ _id: id },
+		{
+			isCurrent: true,
+		},
+		{ new: true }
+	);
 
 	console.log('I passed here to update');
 
