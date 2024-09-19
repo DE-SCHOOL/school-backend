@@ -64,14 +64,15 @@ const markSchema = new mongoose.Schema(
 // markSchema.index({student: 1}) 1 for ascending order and -1 for descending order
 
 //Setting a composite key combination of student and course ids then academicYear
-markSchema.post('init', async function () {
-	try {
-		await this.collection.dropIndex('course_1_student_1');
-		console.log('Old index dropped');
-	} catch (error) {
-		console.log('Error dropping index (may not exist):', error.message);
-	}
-});
+// @Served: Already used
+// markSchema.post('init', async function () {
+// 	try {
+// 		await this.collection.dropIndex('course_1_student_1');
+// 		console.log('Old index dropped');
+// 	} catch (error) {
+// 		console.log('Error dropping index (may not exist):', error.message);
+// 	}
+// });
 
 // markSchema.index({ course: 1, student: 1 }, { unique: true });
 markSchema.index({ course: 1, student: 1, academicYear: 1 }, { unique: true });
