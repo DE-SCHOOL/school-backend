@@ -162,7 +162,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student',
 			},
 		},
-		// { $unwind: '$student' },
+		{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
 		{
 			$lookup: {
 				from: 'specialties',
@@ -171,7 +171,9 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty',
 			},
 		},
-		// { $unwind: '$student.specialty' },
+		{
+			$unwind: { path: '$student.specialty', preserveNullAndEmptyArrays: true },
+		},
 		{
 			$lookup: {
 				from: 'departments',
@@ -180,7 +182,12 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department',
 			},
 		},
-		// { $unwind: '$student.specialty.department' },
+		{
+			$unwind: {
+				path: '$student.specialty.department',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'programs',
@@ -189,7 +196,12 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program',
 			},
 		},
-		// { $unwind: '$student.specialty.department.program' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -198,7 +210,12 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program.director',
 			},
 		},
-		// { $unwind: '$student.specialty.department.program.director' },
+		{
+			$unwind: {
+				path: '$student.specialty.department.program.director',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
 		{
 			$lookup: {
 				from: 'staffs',
@@ -208,7 +225,10 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 			},
 		},
 		{
-			// $unwind: '$student.specialty.department.program.deputyDirector',
+			$unwind: {
+				path: '$student.specialty.department.program.deputyDirector',
+				preserveNullAndEmptyArrays: true,
+			},
 		},
 		{
 			$project: {
