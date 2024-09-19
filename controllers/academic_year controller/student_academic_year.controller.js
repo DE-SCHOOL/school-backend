@@ -162,7 +162,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student',
 			},
 		},
-		{ $unwind: '$student' },
+		// { $unwind: '$student' },
 		{
 			$lookup: {
 				from: 'specialties',
@@ -171,7 +171,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty',
 			},
 		},
-		{ $unwind: '$student.specialty' },
+		// { $unwind: '$student.specialty' },
 		{
 			$lookup: {
 				from: 'departments',
@@ -180,7 +180,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department',
 			},
 		},
-		{ $unwind: '$student.specialty.department' },
+		// { $unwind: '$student.specialty.department' },
 		{
 			$lookup: {
 				from: 'programs',
@@ -189,7 +189,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program' },
+		// { $unwind: '$student.specialty.department.program' },
 		{
 			$lookup: {
 				from: 'staffs',
@@ -198,7 +198,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 				as: 'student.specialty.department.program.director',
 			},
 		},
-		{ $unwind: '$student.specialty.department.program.director' },
+		// { $unwind: '$student.specialty.department.program.director' },
 		{
 			$lookup: {
 				from: 'staffs',
@@ -208,7 +208,7 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 			},
 		},
 		{
-			$unwind: '$student.specialty.department.program.deputyDirector',
+			// $unwind: '$student.specialty.department.program.deputyDirector',
 		},
 		{
 			$project: {
@@ -248,27 +248,11 @@ exports.getStudentPerAcademicYear = catchAsync(async (req, res, next) => {
 		{ $sort: { level: 1, 'student.name': 1 } },
 	]);
 
-	console.log(students);
-	console.log(
-		students.length,
-		'1---------------------------------------------'
-	);
 	let allStudents = students.map((stud) => {
 		const student = stud.student;
 		student.level = stud.level;
 		return student;
 	});
-
-	console.log(
-		'2----------------------------------------------------------------',
-		allStudents
-	);
-	console.log(
-		allStudents.length,
-		'3---------------------------------------------'
-	);
-
-	// console.log(allStudents, 'JASIO');
 
 	sendResponse(res, 'success', 200, allStudents);
 });
