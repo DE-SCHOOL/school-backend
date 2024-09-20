@@ -46,6 +46,14 @@ exports.login = catchAsync(async (req, res, next) => {
 	}
 
 	// console.log(password, student.password, 'JEFF');
+	if (!student?.password) {
+		return next(
+			new ErrorApi(
+				'Password for this accound not yet set. Please sign in instead!',
+				400
+			)
+		);
+	}
 
 	const isMatch = await student.isPasswordCorrect(password, student.password);
 
