@@ -56,7 +56,7 @@ const studentSchema = new mongoose.Schema({
 		type: String,
 		default: null,
 		validate: {
-			validator: (val) => val.length >= 8,
+			validator: (val) => val?.length >= 8 || val === null,
 			message: 'Password must be at least 8 characters',
 		},
 		select: false,
@@ -98,6 +98,7 @@ const studentSchema = new mongoose.Schema({
 	},
 	picture: {
 		type: String,
+		default: 'n/a',
 	},
 	createdAt: {
 		type: Date,
