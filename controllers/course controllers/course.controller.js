@@ -95,7 +95,7 @@ exports.getCoursesPerSpecialtyPerLevel = catchAsync(async (req, res, next) => {
 	if (semester) {
 		dataSearch.semester = semester;
 	}
-	console.log(dataSearch);
+	// console.log(dataSearch);
 	let courses = await Course.find(dataSearch);
 
 	if (!courses) courses = [];

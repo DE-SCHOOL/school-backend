@@ -10,6 +10,14 @@ router.route('/register').patch(studentAuth.signUp);
 router.route('/login').post(studentAuth.login);
 
 router
+	.route('/timetables/:tokenID')
+	.post(studentAuth.protect, studentController.getTimetables);
+
+router
+	.route('/form-b/:tokenID')
+	.post(studentAuth.protect, studentController.getFormBs);
+
+router
 	.route('/:id/:tokenID')
 	.patch(studentAuth.protect, studentController.editStudent);
 
@@ -21,6 +29,10 @@ router
 router
 	.route('/student/courses/:tokenID')
 	.post(studentAuth.protect, marksController.getStudentMarkSheetAllCourses);
+
+router
+	.route('/student/level/:tokenID')
+	.post(studentAuth.protect, studentController.getStudentPerSearch);
 
 module.exports = router;
 

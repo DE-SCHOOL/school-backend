@@ -3,6 +3,7 @@ const ErrorApi = require('../../utilities/ErrorApi');
 const { createToken, verifyToken } = require('../../utilities/jwt');
 const catchAsync = require('./../../utilities/catchAsync');
 const sendResponse = require('./../../utilities/sendResponse');
+const { auth } = require('./../../firebase.config');
 
 exports.register = catchAsync(async (req, res, next) => {
 	const {
@@ -84,10 +85,17 @@ exports.login = catchAsync(async (req, res, next) => {
 		),
 	};
 
+	//Create custom auth token and add to request
+	console.log(staff._id, 'IDDDDDDDDDDDDDDDD');
+	const customToken = await auth.createCustomToken(`${staff._id}`, {
+		role: staff.role,
+	});
+
 	res.cookie('jwt', token, cookieOption);
 
 	staff._doc.token = token;
 	staff._doc.password = undefined;
+	staff._doc.customToken = customToken;
 	sendResponse(res, 'success', 200, staff);
 });
 

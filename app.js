@@ -21,7 +21,10 @@ const reviewRouter = require('./routes/review routes/review.routes');
 const academicYearRouter = require('./routes/academic_year routes/academic_year.routes');
 const studentAcademicYearRouter = require('./routes/academic_year routes/student_academic_year.routes');
 const studentAppRouter = require('./routes/mobile routes/mobile.student.routes');
-
+// const smsRouter = require('./routes/sms routes/sms.routes');
+const timetableRouter = require('./routes/timetable routes/timetable.routes');
+const formBRouter = require('./routes/form_b routes/formb.routes');
+const listenToNewMessageAlert = require('./controllers/notification controllers/notification');
 const app = express();
 
 //parse the body object to express
@@ -32,8 +35,8 @@ app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'https://school-frontend-alpha.vercel.app',
-		// origin: 'http://localhost:3000',
+		// origin: 'https://school-frontend-alpha.vercel.app',
+		origin: 'http://localhost:3000',
 		optionsSuccessStatus: 204,
 	})
 );
@@ -56,6 +59,9 @@ app.use('/api/v1/review', reviewRouter);
 app.use('/api/v1/academic-year', academicYearRouter);
 app.use('/api/v1/student-academic-year', studentAcademicYearRouter);
 app.use('/api/v1/student-app', studentAppRouter);
+app.use('/api/v1/timetable', timetableRouter);
+app.use('/api/v1/form-b', formBRouter);
+// app.use('/api/v1/sms', smsRouter);
 
 app.all('*', (req, res, next) => {
 	const statusCode = 404;
@@ -64,5 +70,8 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(errorHandler);
+
+// Notifications Handler
+listenToNewMessageAlert();
 
 module.exports = app;

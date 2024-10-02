@@ -1,3 +1,4 @@
+const { db, auth } = require('./../../firebase.config');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const catchAsync = require('./../../utilities/catchAsync');
 const sendResponse = require('./../../utilities/sendResponse');
@@ -27,7 +28,22 @@ exports.signUp = catchAsync(async (req, res, next) => {
 	student.password = password;
 	await student.save();
 
+	//Add student to firestore db
+	await db
+		.collection('users')
+		.doc(id)
+		.set({
+			name: student._doc.name,
+			email: student._doc.email,
+			gender: student._doc.gender,
+			picture: student._doc.picture || 'n/a',
+		});
+
+	//Create custom auth token and add to request
+	const customToken = await auth.createCustomToken(id, { role: 'student' });
+
 	student._doc.token = token;
+	student._doc.customToken = customToken;
 
 	sendResponse(res, 'success', 200, student);
 });
@@ -64,7 +80,23 @@ exports.login = catchAsync(async (req, res, next) => {
 	student._doc.password = undefined;
 
 	const token = await createToken(student._id, process.env.JWT_SECRET_STUDENT);
+
+	//Add student to firestore db
+	await db
+		.collection('users')
+		.doc(id)
+		.set({
+			name: student._doc.name,
+			email: student._doc.email,
+			gender: student._doc.gender,
+			picture: student._doc.picture || 'n/a',
+		});
+
+	//Create custom auth token and add to request
+	const customToken = await auth.createCustomToken(id, { role: 'student' });
+
 	student._doc.token = token;
+	student._doc.customToken = customToken;
 
 	sendResponse(res, 'success', 200, student);
 });
@@ -77,7 +109,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 	if (!token) {
 		return next(new ErrorApi('You are not logged in', 401));
 	}
-	console.log(token);
 	const decoded = await verifyToken(token, process.env.JWT_SECRET_STUDENT);
 
 	const userInfo = { ...decoded };

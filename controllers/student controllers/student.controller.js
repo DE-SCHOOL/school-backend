@@ -10,6 +10,8 @@ const catchAsync = require('./../../utilities/catchAsync');
 const StudentAcademicYear = require('./../../models/student_academic_year.model');
 
 const StaffCourse = require('./../../models/staff_courses.model');
+const Timetable = require('../../models/timetable.model');
+const FormB = require('../../models/formb.model');
 
 exports.createStudent = catchAsync(async (req, res, next) => {
 	const {
@@ -606,4 +608,28 @@ exports.deleteStudent = catchAsync(async (req, res, next) => {
 	const students = await Student.find({});
 
 	sendResponse(res, 'success', 200, students);
+});
+
+exports.getTimetables = catchAsync(async (req, res, next) => {
+	const { level, specialty, academicYear } = req.body;
+
+	const timetables = await Timetable.find({
+		level,
+		specialty,
+		academicYear,
+	}).sort({ level: -1, semester: 1 });
+
+	sendResponse(res, 'success', 200, timetables);
+});
+
+exports.getFormBs = catchAsync(async (req, res, next) => {
+	const { level, specialty, academicYear } = req.body;
+
+	const formBs = await FormB.find({
+		level,
+		specialty,
+		academicYear,
+	}).sort({ level: -1 });
+
+	sendResponse(res, 'success', 200, formBs);
 });

@@ -297,6 +297,7 @@ exports.getStudentAccrossYears = catchAsync(async (req, res, next) => {
 				level: 1,
 				'academicYear.isCurrent': 1,
 				'academicYear.schoolYear': 1,
+				'academicYear._id': 1,
 			},
 		},
 	]);
