@@ -17,6 +17,14 @@ router
 		authController.restrictTo(...RIGHTS.TO_ALL_OFFICE_ADMIN),
 		reviewController.getAllReview
 	);
+
+router
+	.route('/filtered-review/:tokenID')
+	.post(
+		authController.protect,
+		reviewController.getReviewPerSchoolPerBackground
+	);
+
 router.route('/many').post(reviewController.createManyReviews);
 
 router
