@@ -15,6 +15,16 @@ const sendNotification = (token, { message, sender, id, gender }) => {
 			name: sender,
 		},
 		token: token, // Recipient device's FCM token
+		android: {
+			priority: 'high',
+		},
+		apns: {
+			payload: {
+				aps: {
+					'content-available': 1,
+				},
+			},
+		},
 	};
 
 	messaging
