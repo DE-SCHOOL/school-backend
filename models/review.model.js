@@ -20,6 +20,10 @@ const reviewSchema = new mongoose.Schema({
 		type: String,
 		required: [true, 'There must be a review'],
 	},
+	background: {
+		type: String,
+		required: [true, 'A review must be done by known background'],
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
