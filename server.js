@@ -9,7 +9,7 @@ mongoose
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
-	.then(() => console.log('Connected to database LMU'))
+	.then(() => console.log('Connected to school DB'))
 	.catch((err) => console.log('ERROR: ', err));
 
 app.listen(process.env.PORT, () => {
