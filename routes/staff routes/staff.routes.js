@@ -15,6 +15,9 @@ router
 		authController.register
 	);
 
+//ONLY FOR DEV - WHEN CREATING FIRST TEACHER FOR SYSTEM - E.G SYSTEM ADMIN FOR A PARTICULAR SCHOOL
+router.route('/register').post(authController.protect, authController.register);
+
 // router.use(authController.restrictTo('hod', 'admin', 'director', 'lecturer', 'secreteriat'));
 
 router
