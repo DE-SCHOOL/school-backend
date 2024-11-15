@@ -1,3 +1,4 @@
+const { TO_MAIN_ADMIN } = require('../../utilities/restrict');
 const sendResponse = require('../../utilities/sendResponse');
 const Department = require('./../../models/department.model');
 const Staff = require('./../../models/staff.model');
@@ -12,7 +13,11 @@ exports.createDepartment = catchAsync(async (req, res, next) => {
 	if (!department) return next(new ErrorApi('Department not created', 400));
 
 	//Update new HOD to role of hod
-	await Staff.findByIdAndUpdate(hod, { role: 'hod' });
+	const staff = await Staff.findById(hod);
+
+	if (!TO_MAIN_ADMIN.includes(staff?._doc?.role)) {
+		await Staff.findByIdAndUpdate(hod, { role: 'hod' });
+	}
 
 	sendResponse(res, 'success', 201, department);
 });
@@ -34,7 +39,11 @@ exports.editDepartment = catchAsync(async (req, res, next) => {
 	if (!department) return next(new ErrorApi('Department not found', 404));
 
 	//Update new department to role of hod
-	await Staff.findByIdAndUpdate(hod, { role: 'hod' });
+	const staff = await Staff.findById(hod);
+
+	if (!TO_MAIN_ADMIN.includes(staff?._doc?.role)) {
+		await Staff.findByIdAndUpdate(hod, { role: 'hod' });
+	}
 
 	sendResponse(res, 'success', 200, department);
 });
