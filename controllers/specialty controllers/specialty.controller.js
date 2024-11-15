@@ -5,9 +5,10 @@ const ErrorApi = require('./../../utilities/ErrorApi');
 const catchAsync = require('./../../utilities/catchAsync');
 
 exports.createSpecialty = catchAsync(async (req, res, next) => {
-	const { name, department } = req.body;
+	const { name, department, level } = req.body;
+	console.log({ name, department, level });
 
-	const specialty = await Specialty.create({ name, department });
+	const specialty = await Specialty.create({ name, department, level });
 
 	if (!specialty) return next(new ErrorApi('Specialty not created', 400));
 
@@ -16,11 +17,11 @@ exports.createSpecialty = catchAsync(async (req, res, next) => {
 
 exports.editSpecialty = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	const { name, department } = req.body;
+	const { name, department, level } = req.body;
 
 	const specialty = await Specialty.findByIdAndUpdate(
 		id,
-		{ name, department },
+		{ name, department, level },
 		{ runValidators: true, new: true }
 	);
 
