@@ -29,7 +29,7 @@ router
 	);
 
 router
-	.route('/:id/:tokenID')
+	.route('/:id/academic-year/:academicYearID/:tokenID')
 	.patch(
 		authController.protect,
 		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_STAFF),
