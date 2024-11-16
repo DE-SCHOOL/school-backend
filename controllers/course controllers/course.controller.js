@@ -10,8 +10,7 @@ const catchAsync = require('./../../utilities/catchAsync');
 const { calcStatsPerCourse } = require('../../utilities/controllerFactory');
 
 exports.createCourse = catchAsync(async (req, res, next) => {
-	const { name, specialty, code, semester, levels, credit_value, status } =
-		req.body;
+	const { name, specialty, code, levels, credit_value, status } = req.body;
 
 	if (!specialty || specialty?.length === 0)
 		return next(
@@ -26,7 +25,6 @@ exports.createCourse = catchAsync(async (req, res, next) => {
 		name,
 		specialty,
 		code,
-		semester,
 		levels,
 		credit_value,
 		status,
@@ -37,7 +35,7 @@ exports.createCourse = catchAsync(async (req, res, next) => {
 
 exports.editCourse = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	const { name, specialty, code, semester, levels, credit_value, status } =
+	const { name, specialty, code, levels, credit_value, status } =
 		req.body;
 
 	if (!specialty || specialty?.length === 0)
@@ -55,7 +53,6 @@ exports.editCourse = catchAsync(async (req, res, next) => {
 			name,
 			specialty,
 			code,
-			semester,
 			levels,
 			credit_value,
 			status,
