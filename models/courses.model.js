@@ -19,11 +19,12 @@ const courseSchema = new mongoose.Schema({
 	},
 	semester: {
 		type: String,
-		enum: {
-			values: ['s1', 's2'],
-			message: 'A semester must either be s1 or s2',
-		},
-		required: [true, 'A course belongs to a semester'],
+		default: 'all'
+		// enum: {
+		// 	values: ['s1', 's2'],
+		// 	message: 'A semester must either be s1 or s2',
+		// },
+		// required: [true, 'A course belongs to a semester'],
 	},
 	levels: [
 		{
