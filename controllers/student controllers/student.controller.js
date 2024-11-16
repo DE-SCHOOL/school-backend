@@ -59,13 +59,17 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 });
 
 exports.editStudent = catchAsync(async (req, res, next) => {
-	const { id } = req.params;
+	const { id, academicYearID } = req.params;
 
 	const student = await Student.findByIdAndUpdate(id, req.body, {
 		new: true,
 		runValidators: true,
 	});
 
+	const studYear = await StudentAcademicYear.findOneAndUpdate(
+		{ student: id, academicYear: academicYearID },
+		{ level: req.body.level }
+	);
 	if (!student) return next(new ErrorApi('No student found with this ID', 404));
 
 	sendResponse(res, 'success', 200, student);
