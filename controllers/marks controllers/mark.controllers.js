@@ -325,26 +325,3 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 		sendResponse(res, 'success', 200, allValues);
 	}
 );
-
-// exports.getAllStudentMarkSheetAllCourses = catchAsync(
-// 	async (req, res, next) => {
-// 		const { studID: studIDs, academicYear } = req.body;
-
-// 		if (studIDs === undefined || academicYear === undefined) {
-// 			return next(
-// 				new ErrorApi('Courses, studID and level must be provided', 400)
-// 			);
-// 		}
-
-// 		let results = studIDs.map(async (studID, index) => {
-// 			let search = { student: studID, academicYear, course: { $ne: null } };
-// 			return await Mark.find(search);
-// 		});
-
-// 		let allValues = await Promise.all(results);
-
-// 		sendResponse(res, 'success', 200, allValues);
-// 	}
-// );
-
-// http://localhost:8000/api/v1/mark/all/student/courses/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NWEyNTI1MGRhODJkZmY1ZmMwYTEzYSIsImlhdCI6MTcwNjYzNzIwNSwiZXhwIjoxNzE0NDEzMjA1fQ.hDfjLtmvwInFwGGftXUnjqa7TPzxQmfbk_bHRklr-88
