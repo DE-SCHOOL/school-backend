@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { rankStudentResults } = require('./../../utilities/rankStudentResults');
 const Mark = require('./../../models/marks.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const Course = require('./../../models/courses.model');
