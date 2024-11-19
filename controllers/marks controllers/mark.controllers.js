@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { rankStudentResults } = require('./../../utilities/rankStudentResults');
 const Mark = require('./../../models/marks.model');
 const ErrorApi = require('./../../utilities/ErrorApi');
 const Course = require('./../../models/courses.model');
@@ -125,7 +126,7 @@ exports.getStudentMarkSheetAllCourses = catchAsync(async (req, res, next) => {
 
 exports.getAllStudentMarkSheetAllCourses = catchAsync(
 	async (req, res, next) => {
-		const { students: studIDs, academicYear, semester } = req.body;
+		const { students: studIDs, academicYear } = req.body;
 
 		if (studIDs === undefined || academicYear === undefined) {
 			return next(
@@ -293,7 +294,6 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 		for (i = 0; i < specialties.length; i++) {
 			courses[i] = Course.find({
 				specialty: specialties[i],
-				semester,
 				levels: students[i].level,
 			});
 		}
