@@ -86,13 +86,13 @@ markSchema.pre(/^find/, function (next) {
 
 //Defining virtual fields to calculate the credit earned, total marks, grade point, wighted point, grade and GPA
 markSchema.virtual('t1Total').get(function () {
-	return ((this.s1Exam + this.s2Exam) / 2).toFixed(2);
+	return Number(((this.s1Exam + this.s2Exam) / 2).toFixed(2));
 });
 markSchema.virtual('t2Total').get(function () {
-	return ((this.s3Exam + this.s4Exam) / 2).toFixed(2);
+	return Number(((this.s3Exam + this.s4Exam) / 2).toFixed(2));
 });
 markSchema.virtual('t3Total').get(function () {
-	return ((this.s5Exam + this.s6Exam) / 2).toFixed(2);
+	return Number(((this.s5Exam + this.s6Exam) / 2).toFixed(2));
 });
 
 //Grade
