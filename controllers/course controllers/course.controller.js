@@ -110,12 +110,12 @@ exports.deleteCourse = catchAsync(async (req, res, next) => {
 
 exports.primaryCourseStatistics = catchAsync(async (req, res, next) => {
 	const { courseID } = req.params;
-	const { semester, academicYear } = req.body;
+	const { academicYear, term } = req.body;
 
 	// console.log(courseStats);
 	const courseStats = await calcStatsPerCourse(
 		courseID,
-		semester,
+		term,
 		academicYear,
 		Course,
 		Mark
