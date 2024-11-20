@@ -35,8 +35,7 @@ exports.createCourse = catchAsync(async (req, res, next) => {
 
 exports.editCourse = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
-	const { name, specialty, code, levels, credit_value, status } =
-		req.body;
+	const { name, specialty, code, levels, credit_value, status } = req.body;
 
 	if (!specialty || specialty?.length === 0)
 		return next(
