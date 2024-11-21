@@ -64,7 +64,7 @@ router.get(
 );
 
 router.post(
-	'/search/:tokenID',
+	'/search/:academicYearID/:tokenID',
 	authController.protect,
 	authController.restrictTo(...RIGHT.TO_ALL_OFFICE_ADMIN),
 	studentController.getStudentPerSearch
