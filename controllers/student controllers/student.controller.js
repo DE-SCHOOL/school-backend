@@ -541,6 +541,7 @@ exports.getStudentsPerCourseOffering = catchAsync(async (req, res, next) => {
 
 exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 	const { name, specialty, department, level, program } = req.body;
+	const { academicYearID } = req.params;
 	const searchData = { name, specialty, department, level, program };
 
 	// making the search obj
@@ -596,13 +597,278 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		search.name = { $regex: regex };
 	}
 
-	let students = await Student.find({ $or: [search] }).sort({
-		level: 1,
-		name: 1,
-		specialty: 1,
+	// search = [search].map((el) => new mongoose.Types.ObjectId(el));
+	// console.log = [search].map((el) => new mongoose.Types.ObjectId(el));
+	// console.log
+	let searchArray = [];
+	if (typeof search.specialty === 'string')
+		searchArray.push(new mongoose.Types.ObjectId(search.specialty));
+	else if (typeof search.specialty === 'object')
+		searchArray.push(
+			...search.specialty.$in.map((el) => new mongoose.Types.ObjectId(el))
+		);
+
+	// console.log(searchArray, search);
+
+	// const students = await StudentAcademicYear.aggregate([
+	// 	{
+	// 		$match: {
+	// 			$and: [
+	// 				{ academicYear: new mongoose.Types.ObjectId(academicYearID) },
+	// 				{
+	// 					$or: [
+	// 						{ level: '400' },
+	// 						{ 'student.specialty._id': { $in: [search] } }, // Replace specialtyArray with your array
+	// 					],
+	// 				},
+	// 			],
+	// 		},
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: 'students',
+	// 			localField: 'student',
+	// 			foreignField: '_id',
+	// 			as: 'student',
+	// 		},
+	// 	},
+	// 	{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
+	// 	{
+	// 		$lookup: {
+	// 			from: 'specialties',
+	// 			localField: 'student.specialty',
+	// 			foreignField: '_id',
+	// 			as: 'student.specialty',
+	// 		},
+	// 	},
+	// 	{
+	// 		$unwind: { path: '$student.specialty', preserveNullAndEmptyArrays: true },
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: 'departments',
+	// 			localField: 'student.specialty.department',
+	// 			foreignField: '_id',
+	// 			as: 'student.specialty.department',
+	// 		},
+	// 	},
+	// 	{
+	// 		$unwind: {
+	// 			path: '$student.specialty.department',
+	// 			preserveNullAndEmptyArrays: true,
+	// 		},
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: 'programs',
+	// 			localField: 'student.specialty.department.program',
+	// 			foreignField: '_id',
+	// 			as: 'student.specialty.department.program',
+	// 		},
+	// 	},
+	// 	{
+	// 		$unwind: {
+	// 			path: '$student.specialty.department.program',
+	// 			preserveNullAndEmptyArrays: true,
+	// 		},
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: 'staffs',
+	// 			localField: 'student.specialty.department.program.director',
+	// 			foreignField: '_id',
+	// 			as: 'student.specialty.department.program.director',
+	// 		},
+	// 	},
+	// 	{
+	// 		$unwind: {
+	// 			path: '$student.specialty.department.program.director',
+	// 			preserveNullAndEmptyArrays: true,
+	// 		},
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: 'staffs',
+	// 			localField: 'student.specialty.department.program.deputyDirector',
+	// 			foreignField: '_id',
+	// 			as: 'student.specialty.department.program.deputyDirector',
+	// 		},
+	// 	},
+	// 	{
+	// 		$unwind: {
+	// 			path: '$student.specialty.department.program.deputyDirector',
+	// 			preserveNullAndEmptyArrays: true,
+	// 		},
+	// 	},
+	// 	{
+	// 		$project: {
+	// 			level: 1,
+	// 			'student._id': 1,
+	// 			'student.name': 1,
+	// 			'student.matricule': 1,
+	// 			'student.address': 1,
+	// 			'student.gender': 1,
+	// 			'student.dob': 1,
+	// 			'student.pob': 1,
+	// 			'student.email': 1,
+	// 			'student.tel': 1,
+	// 			'student.parent_name': 1,
+	// 			'student.parent_email': 1,
+	// 			'student.parent_tel': 1,
+	// 			'student.level': 1,
+	// 			'student.entry_certificate': 1,
+	// 			// 'student.specialty': 1,
+	// 			'student.specialty.name': 1,
+	// 			'student.specialty._id': 1,
+	// 			// 'student.specialty.department': 1,
+	// 			'student.specialty.department.name': 1,
+	// 			'student.specialty.department._id': 1,
+	// 			// 'student.specialty.department.hod': 1,
+	// 			// 'student.specialty.department.hod.name': 1,
+	// 			// 'student.specialty.department.hod._id': 1,
+	// 			// 'student.specialty.department.program': 1,
+	// 			'student.specialty.department.program.name': 1,
+	// 			'student.specialty.department.program._id': 1,
+	// 			'student.specialty.department.program.director.name': 1,
+	// 			'student.specialty.department.program.director._id': 1,
+	// 			'student.specialty.department.program.deputyDirector.name': 1,
+	// 			'student.specialty.department.program.deputyDirector._id': 1,
+	// 		},
+	// 	},
+	// 	{ $sort: { level: 1, 'student.name': 1, 'student.specialty.name': 1 } },
+	// ]);
+
+	const students = await StudentAcademicYear.aggregate([
+		{
+			$match: {
+				academicYear: new mongoose.Types.ObjectId(academicYearID),
+			},
+		},
+		{
+			$lookup: {
+				from: 'students',
+				localField: 'student',
+				foreignField: '_id',
+				as: 'student',
+			},
+		},
+		{ $unwind: { path: '$student', preserveNullAndEmptyArrays: true } },
+		{
+			$lookup: {
+				from: 'specialties',
+				localField: 'student.specialty',
+				foreignField: '_id',
+				as: 'student.specialty',
+			},
+		},
+		{
+			$unwind: { path: '$student.specialty', preserveNullAndEmptyArrays: true },
+		},
+		{
+			$match: {
+				$or: [
+					{ level: '400' },
+					{ 'student.specialty._id': { $in: searchArray } }, // Replace 'search' with your array of specialty IDs
+				],
+			},
+		},
+		{
+			$lookup: {
+				from: 'departments',
+				localField: 'student.specialty.department',
+				foreignField: '_id',
+				as: 'student.specialty.department',
+			},
+		},
+		{
+			$unwind: {
+				path: '$student.specialty.department',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+		{
+			$lookup: {
+				from: 'programs',
+				localField: 'student.specialty.department.program',
+				foreignField: '_id',
+				as: 'student.specialty.department.program',
+			},
+		},
+		{
+			$unwind: {
+				path: '$student.specialty.department.program',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.director',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.director',
+			},
+		},
+		{
+			$unwind: {
+				path: '$student.specialty.department.program.director',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+		{
+			$lookup: {
+				from: 'staffs',
+				localField: 'student.specialty.department.program.deputyDirector',
+				foreignField: '_id',
+				as: 'student.specialty.department.program.deputyDirector',
+			},
+		},
+		{
+			$unwind: {
+				path: '$student.specialty.department.program.deputyDirector',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+		{
+			$project: {
+				level: 1,
+				'student._id': 1,
+				'student.name': 1,
+				'student.matricule': 1,
+				'student.address': 1,
+				'student.gender': 1,
+				'student.dob': 1,
+				'student.pob': 1,
+				'student.email': 1,
+				'student.tel': 1,
+				'student.parent_name': 1,
+				'student.parent_email': 1,
+				'student.parent_tel': 1,
+				'student.level': 1,
+				'student.entry_certificate': 1,
+				'student.specialty.name': 1,
+				'student.specialty._id': 1,
+				'student.specialty.department.name': 1,
+				'student.specialty.department._id': 1,
+				'student.specialty.department.program.name': 1,
+				'student.specialty.department.program._id': 1,
+				'student.specialty.department.program.director.name': 1,
+				'student.specialty.department.program.director._id': 1,
+				'student.specialty.department.program.deputyDirector.name': 1,
+				'student.specialty.department.program.deputyDirector._id': 1,
+			},
+		},
+		{ $sort: { level: 1, 'student.name': 1, 'student.specialty.name': 1 } },
+	]);
+
+	console.log(students, 'JEFFERSON STUDNTS');
+
+	let allStudents = students.map((stud) => {
+		const student = stud.student;
+		student.level = stud.level;
+		return student;
 	});
 
-	sendResponse(res, 'success', 200, students);
+	sendResponse(res, 'success', 200, allStudents);
 });
 
 exports.deleteStudent = catchAsync(async (req, res, next) => {
