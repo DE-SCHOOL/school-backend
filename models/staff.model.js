@@ -97,6 +97,10 @@ const staffSchema = new mongoose.Schema({
 				"Marital status can either be 'married', 'not married', 'seperated' or 'devorced'.",
 		},
 	},
+	isHidden: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 staffSchema.pre('save', async function (next) {
