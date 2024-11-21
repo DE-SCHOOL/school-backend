@@ -311,8 +311,8 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 		//Find student results based on his/her courses and academicYear
 		let j = 0;
 		// let allSearch = [];
-		let results = studIDs.map(async (studID) => {
-			let search = { student: studID, academicYear, course: myCourse2D[j] };
+		let results = studIDs.map(async (studID, index) => {
+			let search = { student: studID, academicYear, course: myCourse2D[index] };
 
 			let query = await Mark.find(search);
 			j = j + 1;
