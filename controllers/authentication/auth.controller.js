@@ -21,6 +21,7 @@ exports.register = catchAsync(async (req, res, next) => {
 		picture,
 		high_certificate,
 		marital_status,
+		isHidden,
 	} = req.body;
 	const staff = await Staff.create({
 		name,
@@ -37,6 +38,7 @@ exports.register = catchAsync(async (req, res, next) => {
 		picture,
 		high_certificate,
 		marital_status,
+		isHidden: isHidden !== undefined ? isHidden : false,
 	});
 
 	staff.password = undefined;
