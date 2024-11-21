@@ -94,6 +94,19 @@ markSchema.virtual('t2Total').get(function () {
 markSchema.virtual('t3Total').get(function () {
 	return Number(((this.s5Exam + this.s6Exam) / 2).toFixed(2));
 });
+markSchema.virtual('yearTotal').get(function () {
+	return Number(
+		(
+			(this.s1Exam +
+				this.s2Exam +
+				this.s3Exam +
+				this.s4Exam +
+				this.s5Exam +
+				this.s6Exam) /
+			6
+		).toFixed(2)
+	);
+});
 
 //Grade
 markSchema.virtual('s1Grade').get(function () {
