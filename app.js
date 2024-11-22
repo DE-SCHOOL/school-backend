@@ -35,8 +35,8 @@ app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'https://school-frontend-alpha.vercel.app',
-		// origin: 'http://localhost:3000',
+		// origin: 'https://school-frontend-alpha.vercel.app',
+		origin: 'http://localhost:3000',
 		optionsSuccessStatus: 204,
 	})
 );
