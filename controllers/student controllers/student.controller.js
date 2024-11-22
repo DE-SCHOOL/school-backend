@@ -606,15 +606,17 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 
 	if (search?.name !== undefined)
 		extraSearch.push({ 'student.name': search.name });
-	if (search?.level !== undefined)
-		extraSearch.push({ 'student.level': search.level });
 
 	if (typeof search.specialty === 'string')
 		searchArray.push(new mongoose.Types.ObjectId(search.specialty));
-	else if (typeof search.specialty === 'object')
-		searchArray.push(
-			...search.specialty.$in.map((el) => new mongoose.Types.ObjectId(el))
+	else if (typeof search.specialty === 'object') {
+		let specialtyStrings = search.specialty.$in.filter(
+			(el) => typeof el === 'string'
 		);
+		searchArray.push(
+			...specialtyStrings.map((el) => new mongoose.Types.ObjectId(el))
+		);
+	}
 
 	const students = await StudentAcademicYear.aggregate([
 		{
@@ -645,8 +647,11 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		{
 			$match: {
 				$or: [
-					...extraSearch,
-					{ 'student.specialty._id': { $in: searchArray } }, // Replace 'search' with your array of specialty IDs
+					...(extraSearch.length > 0 ? extraSearch : []), // Include extraSearch conditions if it's not empty
+					...(searchArray.length > 0
+						? [{ 'student.specialty._id': { $in: searchArray } }]
+						: []), // Include specialty search if searchArray is not empty
+					...(extraSearch.length === 0 && searchArray.length === 0 ? [{}] : []), // Match all documents if both arrays are empty
 				],
 			},
 		},
@@ -744,6 +749,11 @@ exports.getStudentPerSearch = catchAsync(async (req, res, next) => {
 		return student;
 	});
 
+	if (search?.level !== undefined) {
+		allStudents = allStudents.filter(
+			(stud) => stud.level === Number(search.level)
+		);
+	}
 	sendResponse(res, 'success', 200, allStudents);
 });
 
