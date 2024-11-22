@@ -76,13 +76,13 @@ exports.getMarkSheetsPerCoursePerStudents = catchAsync(
 exports.updateStudentsMark = catchAsync(async (req, res, next) => {
 	// const markType = ['s1CA', 's1Exam', 's2CA', 's2Exam', 'preMock', 'mock']; possible values for markType
 	const { courseID, markType } = req.params;
-	const { marks, students } = req.body;
+	const { marks, students, academicYear } = req.body;
 
 	// console.log(students, 1111111);
 	let studentsMark = [];
 	for (let i = 0; i < students.length; i++) {
 		studentsMark[i] = await Mark.findOneAndUpdate(
-			{ student: students[i], course: courseID },
+			{ student: students[i], course: courseID, academicYear },
 			{ [markType]: marks[i] },
 			{ new: true }
 		);
@@ -311,8 +311,8 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 		//Find student results based on his/her courses and academicYear
 		let j = 0;
 		// let allSearch = [];
-		let results = studIDs.map(async (studID) => {
-			let search = { student: studID, academicYear, course: myCourse2D[j] };
+		let results = studIDs.map(async (studID, index) => {
+			let search = { student: studID, academicYear, course: myCourse2D[index] };
 
 			let query = await Mark.find(search);
 			j = j + 1;
