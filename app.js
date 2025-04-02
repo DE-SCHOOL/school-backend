@@ -35,7 +35,7 @@ app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'https://school-frontend-alpha.vercel.app',
+		origin: 'https://gttcbuea.onrender.com',
 		// origin: 'http://localhost:3000',
 		optionsSuccessStatus: 204,
 	})

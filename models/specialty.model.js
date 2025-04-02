@@ -11,6 +11,14 @@ const specialtySchema = new mongoose.Schema({
 		ref: 'department',
 		required: [true, 'A specialty must belong to a department'],
 	},
+	level: {
+		type: Number,
+		enum: {
+			values: [100, 200, 300, 400, 500, 601, 602],
+			message: 'A class must either be 100, 200, 300, 400, 500, 601, or 602',
+		},
+		required: [true, 'A student must belong to a class'],
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),

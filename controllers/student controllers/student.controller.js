@@ -27,7 +27,6 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 		parent_email,
 		parent_tel,
 		level,
-		entry_certificate,
 		pob,
 	} = req.body;
 	const { academicYearID } = req.params;
@@ -45,7 +44,6 @@ exports.createStudent = catchAsync(async (req, res, next) => {
 		parent_email,
 		parent_tel,
 		level,
-		entry_certificate,
 		pob,
 	});
 

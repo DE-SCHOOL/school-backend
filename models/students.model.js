@@ -36,21 +36,22 @@ const studentSchema = new mongoose.Schema({
 	},
 	email: {
 		type: String,
-		unique: true,
-		required: [true, 'student email address must be provided'],
-		validate: [validator.isEmail, 'Invalid student email address'],
+		// unique: true,
+		// required: [true, 'student email address must be provided'],
+		// validate: [validator.isEmail, 'Invalid student email address'],
 	},
 	tel: {
 		type: Number,
-		unique: true,
-		required: [true, 'Student must have a phone number'],
-		validate: {
-			validator: (val) => {
-				const isValid = `${val}`.startsWith('6') && `${val}`.length === 9;
-				return isValid;
-			},
-			message: 'Invalid Phone number for student',
-		},
+		// unique: true,
+		// default: 600000000,
+		// required: [true, 'Student must have a phone number'],
+		// validate: {
+		// 	validator: (val) => {
+		// 		const isValid = `${val}`.startsWith('6') && `${val}`.length === 9;
+		// 		return isValid;
+		// 	},
+		// 	message: 'Invalid Phone number for student',
+		// },
 	},
 	password: {
 		type: String,
@@ -67,8 +68,8 @@ const studentSchema = new mongoose.Schema({
 	},
 	parent_email: {
 		type: String,
-		required: [true, 'parent email address must be provided'],
-		validate: [validator.isEmail, 'Invalid parent email address'],
+		// required: [true, 'parent email address must be provided'],
+		// validate: [validator.isEmail, 'Invalid parent email address'],
 	},
 	parent_tel: {
 		type: Number,
@@ -84,18 +85,18 @@ const studentSchema = new mongoose.Schema({
 	level: {
 		type: Number,
 		enum: {
-			values: [200, 300, 400, 500, 601, 602, 603],
-			message: 'A level must either be 200, 300, 400, 601, or 602',
+			values: [100, 200, 300, 400, 500, 601, 602, 603],
+			message: 'A class must either be 100, 200, 300, 400, 500, 601, or 602',
 		},
-		required: [true, 'A course is tought in a particular class level'],
+		required: [true, 'A student belongs to a particular class'],
 	},
-	entry_certificate: {
-		type: String,
-		required: [
-			true,
-			'A student must have an entry level certificate to show to be admitted',
-		],
-	},
+	// entry_certificate: {
+	// 	type: String,
+	// 	required: [
+	// 		true,
+	// 		'A student must have an entry level certificate to show to be admitted',
+	// 	],
+	// },
 	picture: {
 		type: String,
 		default: 'n/a',

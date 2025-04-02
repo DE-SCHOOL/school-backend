@@ -14,39 +14,51 @@ const markSchema = new mongoose.Schema(
 			ref: 'student',
 			required: [true, 'Marks must belong to a specific course'],
 		},
-		s1CA: {
-			type: Number,
-			min: [0, 'minimum for a CA mark should be 0'],
-			max: [30, 'maximum for an Exam mark should be 30'],
-			default: 0,
-		},
 		s1Exam: {
 			type: Number,
-			min: [0, 'minimum for a CA mark should be 0'],
-			max: [70, 'maximum for an Exam mark should be 70'],
-			default: 0,
-		},
-		s2CA: {
-			type: Number,
-			min: [0, 'minimum for a CA mark should be 0'],
-			max: [30, 'maximum for an Exam mark should be 30'],
+			min: [0, 'minimum for an Exam mark should be 0'],
+			max: [20, 'maximum for an Exam mark should be 20'],
 			default: 0,
 		},
 		s2Exam: {
 			type: Number,
-			min: [0, 'minimum for a CA mark should be 0'],
-			max: [70, 'maximum for an Exam mark should be 70'],
+			min: [0, 'minimum for an Exam mark should be 0'],
+			max: [20, 'maximum for an Exam mark should be 20'],
+			default: 0,
+		},
+		s3Exam: {
+			type: Number,
+			min: [0, 'minimum for an Exam mark should be 0'],
+			max: [20, 'maximum for an Exam mark should be 20'],
+			default: 0,
+		},
+		s4Exam: {
+			type: Number,
+			min: [0, 'minimum for a Exam mark should be 0'],
+			max: [20, 'maximum for an Exam mark should be 20'],
+			default: 0,
+		},
+		s5Exam: {
+			type: Number,
+			min: [0, 'minimum for an Exam mark should be 0'],
+			max: [20, 'maximum for an Exam mark should be 20'],
+			default: 0,
+		},
+		s6Exam: {
+			type: Number,
+			min: [0, 'minimum for an Exam mark should be 0'],
+			max: [20, 'maximum for an Exam mark should be 20'],
 			default: 0,
 		},
 		preMock: {
 			type: Number,
-			min: [0, 'minimum for a CA mark should be 0'],
+			min: [0, 'minimum for an Exam mark should be 0'],
 			max: [100, 'maximum for an Exam mark should be 100'],
 			default: 0,
 		},
 		mock: {
 			type: Number,
-			min: [0, 'minimum for a CA mark should be 0'],
+			min: [0, 'minimum for Exam mark should be 0'],
 			max: [100, 'maximum for an Exam mark should be 100'],
 			default: 0,
 		},
@@ -59,20 +71,6 @@ const markSchema = new mongoose.Schema(
 		toJSON: { virtuals: true },
 	}
 );
-
-//Setting student as an index without using unique:true in modelSchema definition
-// markSchema.index({student: 1}) 1 for ascending order and -1 for descending order
-
-//Setting a composite key combination of student and course ids then academicYear
-// @Served: Already used
-// markSchema.post('init', async function () {
-// 	try {
-// 		await this.collection.dropIndex('course_1_student_1');
-// 		console.log('Old index dropped');
-// 	} catch (error) {
-// 		console.log('Error dropping index (may not exist):', error.message);
-// 	}
-// });
 
 // markSchema.index({ course: 1, student: 1 }, { unique: true });
 markSchema.index({ course: 1, student: 1, academicYear: 1 }, { unique: true });
@@ -87,53 +85,27 @@ markSchema.pre(/^find/, function (next) {
 });
 
 //Defining virtual fields to calculate the credit earned, total marks, grade point, wighted point, grade and GPA
-markSchema.virtual('s1Total').get(function () {
-	if (
-		// this.course?.levels.includes(300) &&
-		this.mock !== 0 ||
-		this.preMock !== 0
-	) {
-		let mark = this.mock !== 0 ? this.mock : this.preMock;
-
-		this.s1CA = (0.3 * mark).toFixed(2);
-		this.s1Exam = (0.7 * mark).toFixed(2);
-	}
-	return this.s1CA + this.s1Exam;
+markSchema.virtual('t1Total').get(function () {
+	return Number(((this.s1Exam + this.s2Exam) / 2).toFixed(2));
 });
-markSchema.virtual('s2Total').get(function () {
-	if (
-		// this.course?.levels.includes(300) &&
-		this.mock !== 0 ||
-		this.preMock !== 0
-	) {
-		let mark = this.mock !== 0 ? this.mock : this.preMock;
-
-		this.s2CA = (0.3 * mark).toFixed(2);
-		this.s2Exam = (0.7 * mark).toFixed(2);
-	}
-	return this.s2CA + this.s2Exam;
+markSchema.virtual('t2Total').get(function () {
+	return Number(((this.s3Exam + this.s4Exam) / 2).toFixed(2));
 });
-
-//credit earned
-markSchema.virtual('s1CreditEarned').get(function () {
-	// console.log(this.s1Total, this.course.credit_value);
-	if (this.s1Total >= 40) return this?.course?.credit_value || 0;
-
-	return 0;
+markSchema.virtual('t3Total').get(function () {
+	return Number(((this.s5Exam + this.s6Exam) / 2).toFixed(2));
 });
-markSchema.virtual('s2CreditEarned').get(function () {
-	// console.log(this.s1Total, this.course.credit_value);
-	if (this.s2Total >= 40) return this?.course?.credit_value || 0;
-
-	return 0;
-});
-
-//Grade point
-markSchema.virtual('s1GradePoint').get(function () {
-	return determineGradePoint(this.s1Total);
-});
-markSchema.virtual('s2GradePoint').get(function () {
-	return determineGradePoint(this.s2Total);
+markSchema.virtual('yearTotal').get(function () {
+	return Number(
+		(
+			(this.s1Exam +
+				this.s2Exam +
+				this.s3Exam +
+				this.s4Exam +
+				this.s5Exam +
+				this.s6Exam) /
+			6
+		).toFixed(2)
+	);
 });
 
 //Grade
@@ -142,14 +114,6 @@ markSchema.virtual('s1Grade').get(function () {
 });
 markSchema.virtual('s2Grade').get(function () {
 	return determineGrade(this.s2Total);
-});
-
-//Weighted points
-markSchema.virtual('s1WeightedPoints').get(function () {
-	return this.s1CreditEarned * this.s1GradePoint;
-});
-markSchema.virtual('s2WeightedPoints').get(function () {
-	return this.s2CreditEarned * this.s2GradePoint;
 });
 
 const Mark = mongoose.model('mark', markSchema);

@@ -14,7 +14,7 @@ const sendNotification = (token, { message, sender, id, gender }) => {
 			gender,
 			name: sender,
 		},
-		token: token, // Recipient device's FCM token
+		token: token,
 		android: {
 			priority: 'high',
 		},
@@ -38,7 +38,7 @@ const sendNotification = (token, { message, sender, id, gender }) => {
 };
 
 const listenToNewMessageAlert = () => {
-	// Set up Firestore snapshot listener
+	// Setting up Firestore snapshot listener
 	db.collection('messages').onSnapshot((snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const messageData = change.doc.data();
@@ -81,7 +81,7 @@ const listenToNewMessageAlert = () => {
 							// Send notification to the receiver
 							sendNotification(fcmToken, {
 								message: messageData.message,
-								sender: sender.name, // Include sender's name
+								sender: sender.name,
 								id: senderId,
 								gender: sender.gender,
 							});
