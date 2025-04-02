@@ -47,7 +47,7 @@ app.use(cookieParser());
 
 const limiter = rateLimit({
 	windowMs: process.env.RATE_LIMIT_WAIT_TIME || 3 * 60 * 1000, //For 3 minutes
-	limit: process.env.RATE_LIMIT_ATTEMPTS || 3,
+	limit: process.env.RATE_LIMIT_ATTEMPTS || 10,
 	standardHeaders: 'draft-8',
 	legacyHeaders: false,
 	message: 'Too many request, try again in 3 minutes.',
