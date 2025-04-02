@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 
 const ErrorApi = require('./utilities/ErrorApi');
 const errorHandler = require('./controllers/error/error.controller');
@@ -43,6 +44,17 @@ app.use(
 
 //parse the cookie through the cookie middleware
 app.use(cookieParser());
+
+const limiter = rateLimit({
+	windowMs: process.env.RATE_LIMIT_WAIT_TIME || 3 * 60 * 1000, //For 3 minutes
+	limit: process.env.RATE_LIMIT_ATTEMPTS || 3,
+	standardHeaders: 'draft-8',
+	legacyHeaders: false,
+	message: 'Too many request, try again in 3 minutes.',
+	statusCode: 429,
+});
+
+app.use('/api/v1/staff', limiter);
 
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);
