@@ -213,7 +213,7 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 
 	let courses = await Course.find({
 		// $or: newSearch,
-		search,
+		...search,
 	}).sort({
 		level: 1,
 		name: 1,
