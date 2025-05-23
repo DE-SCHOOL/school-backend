@@ -130,6 +130,7 @@ exports.primaryCourseStatistics = catchAsync(async (req, res, next) => {
 exports.primaryCoursesStatistics = catchAsync(async (req, res, next) => {
 	// console.log('good');
 	const { semester, academicYear, courseIDs } = req.body;
+	console.log({ semester, academicYear, courseIDs })
 
 	let coursesStats = [];
 	for (let i = 0; i < courseIDs.length; i++) {
@@ -151,7 +152,7 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 	const searchData = { name, specialty, department, level, program };
 
 	// making the search obj
-	let search = { name, levels: [level], specialty };
+	let search = { name, levels: { $in: [level] }, specialty };
 	for (let key in search) {
 		if (search[key] === '' || search[key] === undefined) delete search[key];
 		if (level === undefined) delete search['levels'];
