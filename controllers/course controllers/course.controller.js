@@ -204,7 +204,14 @@ exports.getCoursesPerSearch = catchAsync(async (req, res, next) => {
 		search.name = { $regex: regex };
 	}
 
-	let courses = await Course.find({ $or: [search] }).sort({
+	let newSearch = [];
+	for (let key in search) {
+		newSearch.push({ [key]: search[key] });
+	}
+
+	let courses = await Course.find({
+		$or: newSearch,
+	}).sort({
 		level: 1,
 		name: 1,
 		specialty: 1,
