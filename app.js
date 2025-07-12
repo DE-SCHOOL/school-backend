@@ -35,7 +35,7 @@ app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'https://gttcbuea.onrender.com',
+		origin: 'https://school-backend-2mbb.onrender.com',
 		// origin: 'http://localhost:3000',
 		optionsSuccessStatus: 204,
 	})
