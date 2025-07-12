@@ -35,7 +35,7 @@ app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'https://school-backend-2mbb.onrender.com',
+		origin: 'https://gloskul.onrender.com',
 		// origin: 'http://localhost:3000',
 		optionsSuccessStatus: 204,
 	})
