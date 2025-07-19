@@ -14,8 +14,8 @@ const specialtySchema = new mongoose.Schema({
 	level: {
 		type: Number,
 		enum: {
-			values: [100, 200, 300, 400, 500, 601, 602],
-			message: 'A class must either be 100, 200, 300, 400, 500, 601, or 602',
+			values: [100, 200, 300, 400, 500, 601, 602, 603, 604],
+			message: 'A class must either be 100, 200, 300, 400, 500, 601, 602, 603 or 604',
 		},
 		required: [true, 'A student must belong to a class'],
 	},
