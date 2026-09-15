@@ -32,6 +32,30 @@ const schoolSchema = new mongoose.Schema({
 	address: {
 		type: String,
 	},
+	// Cameroonian institutional-letterhead fields — printed on official
+	// documents (mark sheets, transcripts, statistics reports; see
+	// school-frontend's src/utilities/appData.js). Previously one
+	// hardcoded object (schoolHeaderProp) baked LMU's own details into
+	// every tenant's printed documents; now sourced per-school from here.
+	// Optional/no restrictive defaults since the exact set of fields a
+	// school prints on its letterhead is theirs to decide — `country`
+	// defaults to Cameroon since that's this platform's actual market.
+	poBox: {
+		type: String,
+	},
+	region: {
+		type: String,
+	},
+	country: {
+		type: String,
+		default: 'REPUBLIC OF CAMEROON',
+	},
+	motto: {
+		type: String,
+	},
+	ministry: {
+		type: String,
+	},
 	logo: {
 		type: String,
 		default: 'n/a',

@@ -107,13 +107,28 @@ exports.purchase = catchAsync(async (req, res, next) => {
 		return { canteenItemId: item._id, name: item.name, priceXAF: item.priceXAF, qty };
 	});
 
-	const account = await CanteenAccount.findOne({ studentId });
-	if (!account || account.balanceXAF < total) {
+	// Atomic check-and-deduct, not a read-then-write. A plain
+	// findOne()+mutate+save() here is a real lost-update race under
+	// concurrent purchases (found and fixed during Stage 10 load
+	// testing — see scripts/verify-stage-10-canteen-concurrency.js):
+	// two simultaneous requests can both read the same starting
+	// balance, both pass the sufficiency check, and the second
+	// .save() silently clobbers the first's deduction — both
+	// purchases report success, but the account's actual balance
+	// ends up short exactly one deduction. The filter's
+	// `balanceXAF: { $gte: total }` and the `$inc` update execute as
+	// one atomic MongoDB document operation (true regardless of
+	// replica-set/standalone/transactions), so concurrent requests
+	// correctly serialize: only as many succeed as the balance can
+	// actually cover, every time, with no lost updates.
+	const account = await CanteenAccount.findOneAndUpdate(
+		{ studentId, balanceXAF: { $gte: total } },
+		{ $inc: { balanceXAF: -total }, $set: { updatedAt: new Date() } },
+		{ returnDocument: 'after' }
+	);
+	if (!account) {
 		return next(new ErrorApi('Insufficient canteen balance', 402));
 	}
-
-	account.balanceXAF -= total;
-	await account.save();
 
 	const transaction = await CanteenTransaction.create({
 		studentId,

@@ -30,6 +30,7 @@ const studentAppRouter = require('./routes/mobile/mobile.student.routes');
 // const smsRouter = require('./routes/sms routes/sms.routes');
 const timetableRouter = require('./routes/timetable/timetable.routes');
 const formBRouter = require('./routes/form-b/formb.routes');
+const schoolRouter = require('./routes/school/school.routes');
 const listenToNewMessageAlert = require('./controllers/notification/notification');
 const app = express();
 
@@ -88,6 +89,7 @@ app.use('/api/v1/student-academic-year', studentAcademicYearRouter);
 app.use('/api/v1/student-app', studentAppRouter);
 app.use('/api/v1/timetable', timetableRouter);
 app.use('/api/v1/form-b', formBRouter);
+app.use('/api/v1/school', schoolRouter);
 // app.use('/api/v1/sms', smsRouter);
 
 // Express 5's router (path-to-regexp v8) no longer accepts a bare '*'

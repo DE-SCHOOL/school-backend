@@ -38,6 +38,11 @@ exports.createSchool = catchAsync(async (req, res, next) => {
 		contactEmail,
 		contactPhone,
 		address,
+		poBox,
+		region,
+		country,
+		motto,
+		ministry,
 		firstAdmin,
 		plan,
 		billingCycle,
@@ -61,9 +66,10 @@ exports.createSchool = catchAsync(async (req, res, next) => {
 
 	try {
 		await session.withTransaction(async () => {
-			const created = await School.create([{ name, slug, contactEmail, contactPhone, address }], {
-				session,
-			});
+			const created = await School.create(
+				[{ name, slug, contactEmail, contactPhone, address, poBox, region, country, motto, ministry }],
+				{ session }
+			);
 			school = created[0];
 
 			await Staff.create(

@@ -53,6 +53,17 @@ jobs:
 
       - run: npm run verify:stage-4-5
 
+      # Stage 10's canteen load test — fully self-contained (own
+      # disposable mongod, no external network dependency), unlike
+      # verify:stage-6-8/verify:soroban-backend (real Stellar testnet)
+      # or verify:stage-9 (needs the real school's data export, which
+      # lives outside this repo, not in CI's checkout) — safe as a real
+      # CI gate. This is the test that caught canteen.controller.js's
+      # lost-update race under concurrent purchases; keeping it in CI
+      # stops that regressing silently if the handler is ever touched
+      # again.
+      - run: npm run verify:stage-10-canteen-concurrency
+
       # High/critical only, so a new moderate-severity transitive advisory
       # (there will always be one eventually) doesn't block every PR —
       # matches what Stage 2 actually fixed vs. left as a known,
