@@ -7,25 +7,25 @@ const ErrorApi = require('./utilities/ErrorApi');
 const errorHandler = require('./controllers/error/error.controller');
 
 //ROUTES
-const staffRouter = require('./routes/staff routes/staff.routes');
-const programRouter = require('./routes/program routes/program.routes');
-const departmentRouter = require('./routes/department routes/department.routes');
-const specialtyRouter = require('./routes/specialty routes/specialty.routes');
-const studentRouter = require('./routes/student routes/student.routes');
-const courseRouter = require('./routes/course routes/course.routes');
-const staffCourseRouter = require('./routes/staff_course routes/staff_course.routes');
-const markRouter = require('./routes/mark routes/mark.routes');
-const attendanceRouter = require('./routes/attendance routes/attendance.routes');
-const questionCategoryRouter = require('./routes/question routes/question_category.routes');
-const questionRouter = require('./routes/question routes/question.routes');
-const reviewRouter = require('./routes/review routes/review.routes');
-const academicYearRouter = require('./routes/academic_year routes/academic_year.routes');
-const studentAcademicYearRouter = require('./routes/academic_year routes/student_academic_year.routes');
-const studentAppRouter = require('./routes/mobile routes/mobile.student.routes');
+const staffRouter = require('./routes/staff/staff.routes');
+const programRouter = require('./routes/program/program.routes');
+const departmentRouter = require('./routes/department/department.routes');
+const specialtyRouter = require('./routes/specialty/specialty.routes');
+const studentRouter = require('./routes/student/student.routes');
+const courseRouter = require('./routes/course/course.routes');
+const staffCourseRouter = require('./routes/staff-course/staff_course.routes');
+const markRouter = require('./routes/mark/mark.routes');
+const attendanceRouter = require('./routes/attendance/attendance.routes');
+const questionCategoryRouter = require('./routes/question/question_category.routes');
+const questionRouter = require('./routes/question/question.routes');
+const reviewRouter = require('./routes/review/review.routes');
+const academicYearRouter = require('./routes/academic-year/academic_year.routes');
+const studentAcademicYearRouter = require('./routes/academic-year/student_academic_year.routes');
+const studentAppRouter = require('./routes/mobile/mobile.student.routes');
 // const smsRouter = require('./routes/sms routes/sms.routes');
-const timetableRouter = require('./routes/timetable routes/timetable.routes');
-const formBRouter = require('./routes/form_b routes/formb.routes');
-const listenToNewMessageAlert = require('./controllers/notification controllers/notification');
+const timetableRouter = require('./routes/timetable/timetable.routes');
+const formBRouter = require('./routes/form-b/formb.routes');
+const listenToNewMessageAlert = require('./controllers/notification/notification');
 const app = express();
 
 //parse the body object to express
