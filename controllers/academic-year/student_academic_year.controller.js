@@ -13,7 +13,7 @@ exports.createStudentAcademicYearBulk = catchAsync(async (req, res, next) => {
 	}
 
 	let studentAcademicYear = [];
-	for (i = 0; i < students.length; i++) {
+	for (let i = 0; i < students.length; i++) {
 		studentAcademicYear[i] = await StudentAcademicYear.create({
 			student: students[i]._id,
 			academicYear: toYearID,
@@ -112,7 +112,7 @@ exports.promoteStudentsBulk = catchAsync(async (req, res, next) => {
 		);
 	}
 
-	for (i = 0; i < students.length; i++) {
+	for (let i = 0; i < students.length; i++) {
 		await Student.findByIdAndUpdate(
 			students[i].studentID,
 			{
