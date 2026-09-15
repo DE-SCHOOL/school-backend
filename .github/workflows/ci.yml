@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      # High/critical only, so a new moderate-severity transitive advisory
+      # (there will always be one eventually) doesn't block every PR —
+      # matches what Stage 2 actually fixed vs. left as a known,
+      # unfixable-from-here transitive issue (see the Stage 2.1 commit).
+      - run: npm audit --audit-level=high
