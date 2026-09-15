@@ -32,6 +32,8 @@
 		"verify:tenant-isolation": "node scripts/verify-tenant-isolation.js",
 		"verify:stage-4-5": "node scripts/verify-stage-4-5.js",
 		"verify:stage-6-8": "node scripts/verify-stage-6-8.js",
+		"verify:soroban-backend": "node scripts/verify-soroban-backend-integration.js",
+		"deploy:soroban-subscription": "node scripts/deploy-subscription-contract.js",
 		"audit:routes": "node scripts/audit-routes.js"
 	},
 	"engines": {

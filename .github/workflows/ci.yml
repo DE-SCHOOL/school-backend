@@ -21,6 +21,19 @@ jobs:
 
       - run: npm test
 
+      # contracts/subscription-billing's own test suite — fully
+      # self-contained (soroban-sdk's testutils run a local simulated
+      # Soroban VM, no testnet/network dependency at all), unlike the
+      # scripts/verify-* suites below, so this is a real, safe CI gate,
+      # not just a manual/scheduled check. ubuntu-latest ships a Rust
+      # toolchain already; only the wasm target needs adding.
+      - name: Rust contract tests + wasm build
+        run: |
+          rustup target add wasm32v1-none
+          cd contracts
+          cargo test
+          cargo build --target wasm32v1-none --release -p subscription-billing
+
       # Stage 3's tenant-isolation verification (scripts/verify-tenant-isolation.js)
       # spawns a real mongod itself — not mongodb-memory-server, see that
       # script's own header comment for why — so it needs a real mongod

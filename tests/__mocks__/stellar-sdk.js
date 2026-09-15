@@ -29,8 +29,26 @@ class FakeHorizonServer {
 	}
 }
 
+// utilities/stellar/soroban.js constructs `new rpc.Server(...)` at
+// module-load time too, same reasoning as Horizon.Server above.
+class FakeRpcServer {
+	getAccount() {
+		return Promise.resolve({});
+	}
+	prepareTransaction(tx) {
+		return Promise.resolve(tx);
+	}
+	sendTransaction() {
+		return Promise.resolve({ status: 'PENDING', hash: '' });
+	}
+	getTransaction() {
+		return Promise.resolve({ status: 'SUCCESS', returnValue: null });
+	}
+}
+
 module.exports = {
 	Horizon: { Server: FakeHorizonServer },
+	rpc: { Server: FakeRpcServer },
 	Networks: { PUBLIC: 'Public Global Stellar Network ; September 2015', TESTNET: 'Test SDF Network ; September 2015' },
 	Keypair: {
 		random: () => ({ publicKey: () => 'GFAKE', secret: () => 'SFAKE' }),
@@ -54,12 +72,26 @@ module.exports = {
 		payment: () => ({}),
 		changeTrust: () => ({}),
 		setOptions: () => ({}),
+		invokeContractFunction: () => ({}),
+		uploadContractWasm: () => ({}),
+		createCustomContract: () => ({}),
+		createStellarAssetContract: () => ({}),
 	},
 	Asset: class {
 		static native() {
 			return { code: 'XLM' };
 		}
+		contractId() {
+			return 'CFAKE';
+		}
+	},
+	Address: class {
+		constructor(addr) {
+			this.addr = addr;
+		}
 	},
 	Memo: { text: (t) => t },
+	nativeToScVal: (v) => v,
+	scValToNative: (v) => v,
 	BASE_FEE: '100',
 };

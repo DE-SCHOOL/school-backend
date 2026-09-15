@@ -66,6 +66,16 @@ const subscriptionSchema = new mongoose.Schema({
 	currentPeriodEnd: {
 		type: Date,
 	},
+	// Set once a school opts in to on-chain billing via
+	// utilities/stellar/soroban.js's createOnChainSubscription — the id
+	// the real, deployed contracts/subscription-billing contract
+	// returned for this subscription. Null until then; on-chain billing
+	// is opt-in, not required (see soroban.js's own header comment for
+	// why classic Stellar stays the default path).
+	onChainSubscriptionId: {
+		type: String,
+		default: null,
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now,

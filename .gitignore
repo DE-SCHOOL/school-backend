@@ -2,3 +2,5 @@
 node_modules/
 *firebase-adminsdk*.json
 firebase-service-account.local.json
+contracts/target/
+contracts/.last-deploy.json

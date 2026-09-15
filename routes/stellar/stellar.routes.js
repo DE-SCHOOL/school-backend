@@ -86,4 +86,29 @@ router
 		subscriptionPaymentController.reconcilePlatformWallet
 	);
 
+// --- On-chain billing (Soroban, opt-in — school's own admin, not platform) ---
+router
+	.route('/subscription/on-chain/register/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
+		subscriptionPaymentController.registerOnChainSubscription
+	);
+
+router
+	.route('/subscription/on-chain/pay/:tokenID')
+	.post(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_MAIN_ADMIN),
+		subscriptionPaymentController.payOnChainSubscription
+	);
+
+router
+	.route('/subscription/on-chain/status/:tokenID')
+	.get(
+		authController.protect,
+		authController.restrictTo(...RIGHT.TO_ALL_OFFICE_STAFF),
+		subscriptionPaymentController.getOnChainSubscriptionStatus
+	);
+
 module.exports = router;
