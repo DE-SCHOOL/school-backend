@@ -20,6 +20,9 @@
 		"validator": "^13.15.35"
 	},
 	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.10.0",
+		"globals": "^17.12.0",
 		"jest": "^30.2.0",
 		"mongodb": "^7.6.0",
 		"supertest": "^7.1.4"
@@ -28,6 +31,7 @@
 		"start:dev": "NODE_ENV=development  nodemon server.js",
 		"start:prod": "NODE_ENV=production nodemon server.js",
 		"start:production": "NODE_ENV=production node server.js",
+		"lint": "eslint .",
 		"test": "jest --runInBand",
 		"verify:tenant-isolation": "node scripts/verify-tenant-isolation.js",
 		"verify:stage-4-5": "node scripts/verify-stage-4-5.js",
@@ -39,7 +43,9 @@
 		"verify:stage-9": "node scripts/verify-stage-9-migration.js",
 		"verify:stage-10-canteen-concurrency": "node scripts/verify-stage-10-canteen-concurrency.js",
 		"seed:founder-access": "node scripts/seed-founder-access.js",
-		"db:dev": "node scripts/start-dev-mongo.js"
+		"db:dev": "node scripts/start-dev-mongo.js",
+		"seed:demo-data": "node scripts/seed-demo-data.js",
+		"seed:dev-firebase-key": "node scripts/generate-dev-firebase-key.js"
 	},
 	"engines": {
 		"node": "22.x"
