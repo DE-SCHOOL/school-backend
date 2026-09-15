@@ -23,8 +23,21 @@ const sendErrorProd = (err, code, res) => {
 	}
 };
 
+// jsonwebtoken throws plain Errors (JsonWebTokenError for a malformed/
+// invalid/wrong-secret token, TokenExpiredError for an expired-but-
+// otherwise-valid one) with no .statusCode of their own — every
+// protect() (staff, student, platform) calls verifyToken() unguarded,
+// so any bad token previously fell through to the generic 500 default
+// below instead of a 401. Found via Stage 3's tenant-isolation
+// verification script, which deliberately sends a garbage token.
+const STATUS_CODE_BY_ERROR_NAME = {
+	JsonWebTokenError: 401,
+	TokenExpiredError: 401,
+};
+
 module.exports = (err, req, res, next) => {
-	const statusCode = err.statusCode ? err.statusCode : 500;
+	const statusCode =
+		err.statusCode || STATUS_CODE_BY_ERROR_NAME[err.name] || 500;
 	const message = err.message ? err.message : 'Something went very wrong';
 
 	if (process.env.NODE_ENV === 'development') {
@@ -46,6 +59,10 @@ module.exports = (err, req, res, next) => {
 			error.isOperational = true;
 			error.message =
 				'Login expired! Login to refresh you authentication session';
+		}
+		if (err.name === 'JsonWebTokenError') {
+			error.isOperational = true;
+			error.message = 'Invalid login token, please login again';
 		}
 		if (err.name === 'ValidationError') {
 			error.message = err.message.split(':')[2];

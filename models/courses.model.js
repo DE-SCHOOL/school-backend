@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const courseSchema = new mongoose.Schema({
 	name: {
@@ -15,7 +16,6 @@ const courseSchema = new mongoose.Schema({
 	code: {
 		type: String,
 		required: [true, 'A course must have a code'],
-		unique: true,
 	},
 	semester: {
 		type: String,
@@ -54,10 +54,14 @@ const courseSchema = new mongoose.Schema({
 	},
 });
 
-courseSchema.pre(/^find/, function (next) {
-	this.populate('specialty');
+courseSchema.plugin(tenantScope);
+// Was a lone `unique: true` on code — course codes like "CS101" are
+// school-internal and very plausibly reused across different schools.
+// Scoped to (schoolId, code).
+courseSchema.index({ schoolId: 1, code: 1 }, { unique: true });
 
-	next();
+courseSchema.pre(/^find/, function () {
+	this.populate('specialty');
 });
 
 const Course = mongoose.model('course', courseSchema);

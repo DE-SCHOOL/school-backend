@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const determineGrade = require('../utilities/determinGrade');
 const determineGradePoint = require('../utilities/determineGradePoint');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const markSchema = new mongoose.Schema(
 	{
@@ -72,16 +73,16 @@ const markSchema = new mongoose.Schema(
 	}
 );
 
+markSchema.plugin(tenantScope);
+
 // markSchema.index({ course: 1, student: 1 }, { unique: true });
 markSchema.index({ course: 1, student: 1, academicYear: 1 }, { unique: true });
 
-markSchema.pre(/^find/, function (next) {
+markSchema.pre(/^find/, function () {
 	this.populate('course', 'name code credit_value status levels').populate(
 		'student',
 		'name matricule level gender dob pob'
 	);
-
-	next();
 });
 
 //Defining virtual fields to calculate the credit earned, total marks, grade point, wighted point, grade and GPA

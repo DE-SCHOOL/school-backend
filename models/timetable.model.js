@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const timetableSchema = new mongoose.Schema({
 	name: {
@@ -33,13 +34,13 @@ const timetableSchema = new mongoose.Schema({
 	},
 });
 
-timetableSchema.pre(/^find/, function (next) {
+timetableSchema.plugin(tenantScope);
+
+timetableSchema.pre(/^find/, function () {
 	this.populate({ path: 'specialty', select: 'name' }).populate({
 		path: 'academicYear',
 		select: 'schoolYear',
 	});
-
-	next();
 });
 
 const Timetable = mongoose.model('timetable', timetableSchema);

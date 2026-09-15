@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const attendanceSchema = new mongoose.Schema({
 	attendance: [
@@ -22,13 +23,15 @@ const attendanceSchema = new mongoose.Schema({
 	// },
 });
 
-attendanceSchema.pre(/^find/, function (next) {
-	this.populate({ path: 'student', select: 'name level matricule' }).populate(
-		'teacher',
-		'name'
-	);
+attendanceSchema.plugin(tenantScope);
 
-	next();
+attendanceSchema.pre(/^find/, function () {
+	// Was also `.populate('teacher', 'name')` — 'teacher' isn't a field on
+	// this schema (the commented-out field above is 'staff'), so that call
+	// silently populated nothing. Removed rather than guessed at reviving.
+	this.populate({ path: 'student', select: 'name level matricule' });
 });
 
 const Attendance = mongoose.model('attendance', attendanceSchema);
+
+module.exports = Attendance;

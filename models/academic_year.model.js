@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const academicYearSchema = new mongoose.Schema({
 	schoolYear: {
@@ -10,7 +11,6 @@ const academicYearSchema = new mongoose.Schema({
 			},
 			message: 'School Year must be 9 characters e.g yyyy/yyyy',
 		},
-		unique: true,
 	},
 	createdAt: {
 		type: Date,
@@ -25,6 +25,12 @@ const academicYearSchema = new mongoose.Schema({
 		],
 	},
 });
+
+academicYearSchema.plugin(tenantScope);
+// Was a lone `unique: true` on schoolYear — every school has a "2024/2025"
+// year, so global uniqueness would let only one school in the whole
+// platform ever use that string. Scoped to (schoolId, schoolYear).
+academicYearSchema.index({ schoolId: 1, schoolYear: 1 }, { unique: true });
 
 const AcademicYear = mongoose.model('academic_year', academicYearSchema);
 

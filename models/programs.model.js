@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 // const validator = require('validator');
 
 //program should have email?
@@ -7,7 +8,6 @@ const mongoose = require('mongoose');
 const programSchema = new mongoose.Schema({
 	name: {
 		type: String,
-		unique: true,
 		required: [true, 'A program must have a name'],
 	},
 	director: {
@@ -31,10 +31,12 @@ const programSchema = new mongoose.Schema({
 	},
 });
 
-programSchema.pre(/^find/, function (next) {
-	this.populate('director deputyDirector', 'name');
+programSchema.plugin(tenantScope);
+// Was a lone `unique: true` on name — scoped to (schoolId, name).
+programSchema.index({ schoolId: 1, name: 1 }, { unique: true });
 
-	next();
+programSchema.pre(/^find/, function () {
+	this.populate('director deputyDirector', 'name');
 });
 const Program = mongoose.model('program', programSchema);
 module.exports = Program;

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const specialtySchema = new mongoose.Schema({
 	name: {
 		type: String,
-		unique: true, //[true, 'specialty name should be unique'] ---> change and see if this will apply in case of an error
 		required: [true, 'Specialty name should be provided'],
 	},
 	department: {
@@ -25,10 +25,13 @@ const specialtySchema = new mongoose.Schema({
 	},
 });
 
-specialtySchema.pre(/^find/, function (next) {
-	this.populate('department', 'name');
+specialtySchema.plugin(tenantScope);
+// Was a lone `unique: true` on name — scoped to (schoolId, name), same
+// reasoning as department.model.js.
+specialtySchema.index({ schoolId: 1, name: 1 }, { unique: true });
 
-	next();
+specialtySchema.pre(/^find/, function () {
+	this.populate('department', 'name');
 });
 
 const Specialty = mongoose.model('specialty', specialtySchema);

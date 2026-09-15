@@ -21,6 +21,23 @@ jobs:
 
       - run: npm test
 
+      # Stage 3's tenant-isolation verification (scripts/verify-tenant-isolation.js)
+      # spawns a real mongod itself — not mongodb-memory-server, see that
+      # script's own header comment for why — so it needs a real mongod
+      # binary on PATH. ubuntu-latest runners don't ship one by default.
+      # NOTE: this install step follows MongoDB's own documented apt
+      # instructions but has only been verified working against the
+      # actual GitHub Actions environment by inspection, not a real run
+      # of this workflow — watch the first CI run on this branch closely.
+      - name: Install mongod
+        run: |
+          curl -fsSL https://pgp.mongodb.com/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-org-server
+
+      - run: npm run verify:tenant-isolation
+
       # High/critical only, so a new moderate-severity transitive advisory
       # (there will always be one eventually) doesn't block every PR —
       # matches what Stage 2 actually fixed vs. left as a known,

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const studentSchema = new mongoose.Schema({
 	name: {
@@ -9,7 +10,6 @@ const studentSchema = new mongoose.Schema({
 	},
 	matricule: {
 		type: String,
-		unique: true,
 		required: [true, 'Students must have a matricule'],
 	},
 	specialty: {
@@ -107,19 +107,24 @@ const studentSchema = new mongoose.Schema({
 	},
 });
 
-studentSchema.pre(/^find/, function (next) {
+studentSchema.plugin(tenantScope);
+// Was a lone `unique: true` on matricule — two different schools can
+// legitimately reuse the same matricule numbering scheme. Scoped to
+// (schoolId, matricule).
+studentSchema.index({ schoolId: 1, matricule: 1 }, { unique: true });
+
+studentSchema.pre(/^find/, function () {
 	this.populate('specialty', 'name');
-	next();
 });
 
-studentSchema.pre('save', async function (next) {
+studentSchema.pre('save', async function () {
+	// See staff.model.js's identical comment — Mongoose 9 broke
+	// callback-style (next) document middleware; promise-style is correct.
 	if (this.isModified('password')) {
 		const saltRounds = 12;
 		const hash = await bcrypt.hash(this.password, saltRounds);
 		this.password = hash;
 	}
-
-	next();
 });
 
 studentSchema.methods.isPasswordCorrect = async function (plainPassword, hash) {

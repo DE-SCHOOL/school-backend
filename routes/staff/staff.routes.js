@@ -15,8 +15,13 @@ router
 		authController.register
 	);
 
-//ONLY FOR DEV - WHEN CREATING FIRST TEACHER FOR SYSTEM - E.G SYSTEM ADMIN FOR A PARTICULAR SCHOOL
-router.route('/register').post(authController.register);
+// Was: router.route('/register').post(authController.register) — an
+// entirely unauthenticated route ("ONLY FOR DEV" per its own comment,
+// but live in production with no `protect` at all) that let anyone on
+// the internet create an arbitrary admin-role staff account. Creating a
+// brand-new school's first admin is now a platform-super-admin-only
+// action — see routes/platform/platform.routes.js's POST /schools/:tokenID
+// and controllers/platform/school.controller.js's createSchool.
 
 // router.use(authController.restrictTo('hod', 'admin', 'director', 'lecturer', 'secreteriat'));
 

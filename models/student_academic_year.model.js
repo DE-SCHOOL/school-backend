@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const studentAcademicYearSchema = new mongoose.Schema({
 	student: {
@@ -24,6 +25,8 @@ const studentAcademicYearSchema = new mongoose.Schema({
 		default: Date.now(),
 	},
 });
+
+studentAcademicYearSchema.plugin(tenantScope);
 
 studentAcademicYearSchema.index(
 	{ student: 1, academicYear: 1 },

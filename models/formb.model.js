@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const formBSchema = new mongoose.Schema({
 	name: {
@@ -29,13 +30,13 @@ const formBSchema = new mongoose.Schema({
 	},
 });
 
-formBSchema.pre(/^find/, function (next) {
+formBSchema.plugin(tenantScope);
+
+formBSchema.pre(/^find/, function () {
 	this.populate({ path: 'specialty', select: 'name' }).populate({
 		path: 'academicYear',
 		select: 'schoolYear',
 	});
-
-	next();
 });
 
 const FormB = mongoose.model('form_b', formBSchema);

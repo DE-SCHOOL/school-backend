@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 //A program can belong to more than one department, possibly
 const departmentSchema = new mongoose.Schema({
 	name: {
 		type: String,
-		unique: true,
 		required: [true, 'A department must have a name'],
 	},
 	hod: {
@@ -23,10 +23,13 @@ const departmentSchema = new mongoose.Schema({
 	},
 });
 
-departmentSchema.pre(/^find/, function (next) {
-	this.populate('hod', 'name').populate('program', 'name');
+departmentSchema.plugin(tenantScope);
+// Was a lone `unique: true` on name — two different schools can both have
+// a "Computer Science" department. Scoped to (schoolId, name).
+departmentSchema.index({ schoolId: 1, name: 1 }, { unique: true });
 
-	next();
+departmentSchema.pre(/^find/, function () {
+	this.populate('hod', 'name').populate('program', 'name');
 });
 
 const Department = mongoose.model('department', departmentSchema);

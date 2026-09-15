@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const staffCourseSchema = new mongoose.Schema({
 	courses: [
@@ -20,7 +21,9 @@ const staffCourseSchema = new mongoose.Schema({
 	},
 });
 
-staffCourseSchema.pre(/^find/, function (next) {
+staffCourseSchema.plugin(tenantScope);
+
+staffCourseSchema.pre(/^find/, function () {
 	this.populate({
 		path: 'courses',
 		select: 'name levels code credit_value semester status',
@@ -28,8 +31,6 @@ staffCourseSchema.pre(/^find/, function (next) {
 		path: 'staff',
 		select: 'name',
 	});
-
-	next();
 });
 
 const StaffCourse = mongoose.model('staff_course', staffCourseSchema);

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const staffSchema = new mongoose.Schema({
 	name: {
@@ -9,7 +10,6 @@ const staffSchema = new mongoose.Schema({
 	},
 	matricule: {
 		type: String,
-		unique: true,
 		required: [true, 'Students must have a matricule'],
 	},
 	email: {
@@ -103,22 +103,34 @@ const staffSchema = new mongoose.Schema({
 	},
 });
 
-staffSchema.pre('save', async function (next) {
+staffSchema.plugin(tenantScope);
+// Was a lone `unique: true` on matricule — two different schools can
+// legitimately reuse the same matricule numbering scheme. Scoped to
+// (schoolId, matricule). email/tel stay globally unique on purpose:
+// email is the cross-school login lookup key (auth.controller.js's
+// login searches by email alone, before any school is known), and a
+// real phone number is inherently globally unique regardless of tenant.
+staffSchema.index({ schoolId: 1, matricule: 1 }, { unique: true });
+
+staffSchema.pre('save', async function () {
+	// Mongoose 9 changed callback-style document middleware — a
+	// function(next) no longer receives a real callback (it's called with
+	// no usable argument), so `next()` silently threw "next is not a
+	// function" and this hook never actually ran. Promise-style (no
+	// `next` param, throw to fail) is the fix, and is now Mongoose's
+	// primary supported style anyway.
 	if (this.isNew || this.isModified('password')) {
 		const saltRounds = 12;
 		const hash = await bcrypt.hash(this.password, saltRounds);
 		this.password = hash;
 		this.confirmPassword = undefined;
 	}
-	next();
 });
 
-staffSchema.pre(/^find/, function (next) {
+staffSchema.pre(/^find/, function () {
 	this.select('-__v');
 	// this.populate('department', 'name');
 	// this.populate({ path: 'department' });
-
-	next();
 });
 
 staffSchema.methods.isPasswordCorrect = async (hash, plainPassword) => {

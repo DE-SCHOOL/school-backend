@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const reviewSchema = new mongoose.Schema({
 	program: {
@@ -30,10 +31,10 @@ const reviewSchema = new mongoose.Schema({
 	},
 });
 
-reviewSchema.pre(/^find/, function (next) {
-	this.populate('question', 'name');
+reviewSchema.plugin(tenantScope);
 
-	next();
+reviewSchema.pre(/^find/, function () {
+	this.populate('question', 'name');
 });
 
 const Review = mongoose.model('review', reviewSchema);

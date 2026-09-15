@@ -4,7 +4,16 @@ const { createToken, verifyToken } = require('../../utilities/jwt');
 const catchAsync = require('./../../utilities/catchAsync');
 const sendResponse = require('./../../utilities/sendResponse');
 const { auth } = require('./../../firebase.config');
+const tenantContext = require('../../utilities/tenantContext');
 
+// Only reachable via the protected /register/:tokenID route now — see
+// routes/staff/staff.routes.js. schoolId is never read from req.body
+// here; it's inferred automatically from the authenticated caller's own
+// tenant context by tenantScope.plugin.js's pre('validate') hook, so a
+// school admin can never even attempt to create a staff member in a
+// different school. Creating a brand-new school's very first admin (no
+// tenant context to infer from yet) is a separate, platform-only flow —
+// see controllers/platform/school.controller.js's createSchool.
 exports.register = catchAsync(async (req, res, next) => {
 	const {
 		name,
@@ -67,7 +76,12 @@ exports.login = catchAsync(async (req, res, next) => {
 		return next(new ErrorApi('Email or password missing', 400));
 
 	// console.log(email);
-	const staff = await Staff.findOne({ email }).select('+password');
+	// No tenant is known yet at login — email is the cross-school lookup
+	// key on purpose (see staff.model.js), so this deliberately searches
+	// every school.
+	const staff = await Staff.findOne({ email })
+		.select('+password')
+		.setOptions({ skipTenantScope: true });
 
 	if (!staff) return next(new ErrorApi('User not found with this email', 403));
 	// console.log(staff);
@@ -88,7 +102,6 @@ exports.login = catchAsync(async (req, res, next) => {
 	};
 
 	//Create custom auth token and add to request
-	console.log(staff._id, 'IDDDDDDDDDDDDDDDD');
 	const customToken = await auth.createCustomToken(`${staff._id}`, {
 		role: staff.role,
 	});
@@ -120,7 +133,10 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 	const userInfo = { ...tokenInfo };
 
-	const user = await Staff.findById(`${userInfo.id}`);
+	// No tenant context exists yet — this lookup is what determines it.
+	const user = await Staff.findById(`${userInfo.id}`).setOptions({
+		skipTenantScope: true,
+	});
 
 	if (!user)
 		return next(
@@ -129,7 +145,14 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 	req.staff = user;
 
-	next();
+	// Every route/controller downstream of this middleware now runs
+	// inside this tenant's context, so tenantScope.plugin.js can scope
+	// their queries automatically without those controllers needing to
+	// know or pass schoolId themselves. The token's own schoolId is never
+	// trusted for this — it's re-derived from the freshly-fetched Staff
+	// document every single request, so a stale/forged claim can't matter
+	// and a real school transfer takes effect immediately on next login.
+	tenantContext.run({ schoolId: user.schoolId }, next);
 });
 
 exports.restrictTo = (...roles) => {

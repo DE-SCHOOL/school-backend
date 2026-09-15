@@ -8,10 +8,16 @@ const router = express.Router();
 
 // router.use(authController.protect);
 
+// Was fully unauthenticated (protect/restrictTo commented out) — with
+// Specialty now tenant-scoped, an unauthenticated call has no tenant
+// context to scope against and would either throw (fail-closed) or, if
+// this route were ever changed to swallow that error, risk leaking
+// every school's specialties to anyone. Same fix as the old open
+// /register route.
 router.get(
 	'/',
-	// authController.protect,
-	// authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
+	authController.protect,
+	authController.restrictTo(...RIGHTS.TO_ALL_STAFF),
 	specialtyController.getAllSpecialties
 );
 

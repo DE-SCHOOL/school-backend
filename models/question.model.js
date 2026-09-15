@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const tenantScope = require('../utilities/tenantScope.plugin');
 
 const questionSchema = new mongoose.Schema({
 	name: {
@@ -20,10 +21,10 @@ const questionSchema = new mongoose.Schema({
 	},
 });
 
-questionSchema.pre(/^find/, function (next) {
-	this.populate('category', 'name');
+questionSchema.plugin(tenantScope);
 
-	next();
+questionSchema.pre(/^find/, function () {
+	this.populate('category', 'name');
 });
 
 const Question = mongoose.model('question', questionSchema);

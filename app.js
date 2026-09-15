@@ -5,8 +5,10 @@ const rateLimit = require('express-rate-limit');
 
 const ErrorApi = require('./utilities/ErrorApi');
 const errorHandler = require('./controllers/error/error.controller');
+const resolveCorsOrigin = require('./utilities/corsOrigin');
 
 //ROUTES
+const platformRouter = require('./routes/platform/platform.routes');
 const staffRouter = require('./routes/staff/staff.routes');
 const programRouter = require('./routes/program/program.routes');
 const departmentRouter = require('./routes/department/department.routes');
@@ -32,12 +34,14 @@ const app = express();
 app.use(express.json());
 
 //handle Access control origin
+// Was a single hardcoded origin (one school's URL) — now resolved
+// per-request against every registered school's allowedOrigins, since
+// this is a multi-tenant platform now. See utilities/corsOrigin.js.
 app.use(
 	cors({
 		credentials: true,
 		methods: 'POST,GET,PATCH,DELETE',
-		origin: 'https://gttcbuea.onrender.com',
-		// origin: 'http://localhost:3000',
+		origin: resolveCorsOrigin,
 		optionsSuccessStatus: 204,
 	})
 );
@@ -55,7 +59,9 @@ const limiter = rateLimit({
 });
 
 app.use('/api/v1/staff', limiter);
+app.use('/api/v1/platform', limiter);
 
+app.use('/api/v1/platform', platformRouter);
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);
 app.use('/api/v1/department', departmentRouter);
