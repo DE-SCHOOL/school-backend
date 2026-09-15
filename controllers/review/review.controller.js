@@ -34,7 +34,7 @@ exports.createManyReviews = catchAsync(async (req, res, next) => {
 });
 
 exports.getReviewPerSchoolPerBackground = catchAsync(async (req, res, next) => {
-	const { school, background, course } = req.body;
+	const { school, background, course, question } = req.body;
 
 	const reviewResult = await Review.aggregate([
 		{
