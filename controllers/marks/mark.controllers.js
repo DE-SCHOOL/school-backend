@@ -290,7 +290,7 @@ exports.getAllStudentMarkSheetAllCourses = catchAsync(
 		// console.log(studIDs, specialties);
 		//Get student courses per semester for a particular specialty in a particular level
 		let courses = [];
-		for (i = 0; i < specialties.length; i++) {
+		for (let i = 0; i < specialties.length; i++) {
 			courses[i] = Course.find({
 				specialty: specialties[i],
 				levels: students[i].level,
