@@ -1,6 +1,7 @@
 # DE-SCHOOL — Backend
 
 ![CI](https://github.com/DE-SCHOOL/school-backend/actions/workflows/ci.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 The API behind DE-SCHOOL: a multi-tenant school management platform for
 Cameroonian secondary and higher-education institutions, with tuition,
@@ -182,6 +183,4 @@ variables leaking as implicit globals).
 
 ## License
 
-Not yet set — this repository does not currently have a `LICENSE`
-file. If you're a prospective contributor and this matters to you
-before investing time, please open an issue.
+[MIT](LICENSE).
