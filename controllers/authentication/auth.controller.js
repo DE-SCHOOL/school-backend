@@ -93,8 +93,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 	const token = await createToken(`${staff._id}`, process.env.JWT_SECRET);
 
-	let cookieOption = {};
-	cookieOption = {
+	const cookieOption = {
 		httpOnly: true,
 		expires: new Date(
 			Date.now() + process.env.COOKIE_EXP * 24 * 60 * 60 * 1000
