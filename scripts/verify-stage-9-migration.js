@@ -19,11 +19,20 @@ function assert(condition, message) {
 	console.log(`  ok: ${message}`);
 }
 
+// staff is intentionally excluded from EXPECTED_COUNTS below and
+// checked separately as a minimum, not an exact count: real usage
+// legitimately adds staff over time (scripts/seed-founder-access.js's
+// dev admin, or the school actually hiring people), so an exact-match
+// assertion here would start failing forever the moment anyone did
+// anything with this data after the migration — the point of this
+// check is "did every real migrated record survive", not "is the
+// database frozen exactly as the migration left it".
+const MINIMUM_STAFF_COUNT = 7;
+
 const EXPECTED_COUNTS = {
 	academic_year: 4,
 	department: 20,
 	program: 7,
-	staff: 7,
 	specialty: 36,
 	course: 639,
 	student: 1326,
@@ -36,6 +45,7 @@ const EXPECTED_COUNTS = {
 	student_academic_year: 1386,
 	timetable: 0,
 };
+
 
 async function main() {
 	if (!process.env.DATABASE) {
@@ -96,6 +106,11 @@ async function main() {
 				const count = await Model.countDocuments();
 				assert(count === expected, `${modelName}: expected ${expected}, got ${count}`);
 			}
+			const staffCount = await Staff.countDocuments();
+			assert(
+				staffCount >= MINIMUM_STAFF_COUNT,
+				`staff: at least the ${MINIMUM_STAFF_COUNT} real migrated staff are present (got ${staffCount})`
+			);
 		});
 
 		console.log('\n4. populate() on documents with dangling refs (pre-existing in production) does not crash — resolves to null instead');

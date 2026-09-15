@@ -4,3 +4,4 @@ node_modules/
 firebase-service-account.local.json
 contracts/target/
 contracts/.last-deploy.json
+.dev-data/

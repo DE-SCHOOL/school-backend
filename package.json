@@ -37,7 +37,9 @@
 		"audit:routes": "node scripts/audit-routes.js",
 		"migrate:existing-school": "node scripts/migrate-existing-school.js",
 		"verify:stage-9": "node scripts/verify-stage-9-migration.js",
-		"verify:stage-10-canteen-concurrency": "node scripts/verify-stage-10-canteen-concurrency.js"
+		"verify:stage-10-canteen-concurrency": "node scripts/verify-stage-10-canteen-concurrency.js",
+		"seed:founder-access": "node scripts/seed-founder-access.js",
+		"db:dev": "node scripts/start-dev-mongo.js"
 	},
 	"engines": {
 		"node": "22.x"
