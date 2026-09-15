@@ -10,6 +10,8 @@ const resolveCorsOrigin = require('./utilities/corsOrigin');
 //ROUTES
 const platformRouter = require('./routes/platform/platform.routes');
 const personRouter = require('./routes/person/person.routes');
+const stellarRouter = require('./routes/stellar/stellar.routes');
+const canteenRouter = require('./routes/canteen/canteen.routes');
 const staffRouter = require('./routes/staff/staff.routes');
 const programRouter = require('./routes/program/program.routes');
 const departmentRouter = require('./routes/department/department.routes');
@@ -62,9 +64,13 @@ const limiter = rateLimit({
 app.use('/api/v1/staff', limiter);
 app.use('/api/v1/platform', limiter);
 app.use('/api/v1/person', limiter);
+app.use('/api/v1/stellar', limiter);
+app.use('/api/v1/canteen', limiter);
 
 app.use('/api/v1/platform', platformRouter);
 app.use('/api/v1/person', personRouter);
+app.use('/api/v1/stellar', stellarRouter);
+app.use('/api/v1/canteen', canteenRouter);
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1/program', programRouter);
 app.use('/api/v1/department', departmentRouter);
