@@ -102,6 +102,8 @@ app.use((req, res, next) => {
 	next(new ErrorApi(message, statusCode));
 });
 
+
+//Error handler
 app.use(errorHandler);
 
 module.exports = app;
