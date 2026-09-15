@@ -25,7 +25,12 @@ router
 		reviewController.getReviewPerSchoolPerBackground
 	);
 
-router.route('/many').post(reviewController.createManyReviews);
+// Was `router.route('/many').post(reviewController.createManyReviews)`
+// with no protect at all — a write, not just a read, so this was worse
+// than the same dead-duplicate pattern found elsewhere (see
+// program.routes.js's comment for the full reasoning); reviewSlice.js's
+// real call always lands on the protected /many/:tokenID route below
+// instead.
 
 router
 	.route('/many/:tokenID')

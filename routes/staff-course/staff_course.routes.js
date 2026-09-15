@@ -7,7 +7,11 @@ const router = express.Router();
 
 // router.use(authController.protect);
 
-router.route('/').get(staffCourseController.getStaffCourse);
+// Was `router.route('/').get(staffCourseController.getStaffCourse)`
+// with no protect at all — same dead-duplicate pattern as
+// program.routes.js's identical fix (see its comment for the full
+// reasoning); dashboardSlice.js's real call always lands on the
+// protected /:tokenID route below instead.
 
 router
 	.route('/:tokenID')

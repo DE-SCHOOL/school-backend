@@ -7,7 +7,15 @@ const express = require('express');
 const router = express.Router();
 
 // router.use(authController.protect);
-router.route('/').get(programController.getPrograms);
+
+// Was `router.route('/').get(programController.getPrograms)` with no
+// protect at all. Same fix as the routes documented in Stage 3/5's
+// audit findings (student.routes.js has the full account): the
+// frontend's real call (programSlice.js) always lands on the identical,
+// properly protected /:tokenID route below instead — apiRequest.js
+// appends the caller's token as a URL suffix whenever one exists, so
+// this bare path was unreachable in normal use, not a route anything
+// relies on. Removed rather than left as dead, insecure code.
 
 router
 	.route('/:tokenID')

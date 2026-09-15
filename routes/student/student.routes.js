@@ -8,10 +8,23 @@ const router = express.Router();
 
 // router.use(authController.protect);
 
-//temporal stud registration
-router
-	.route('/academic-year/:academicYearID')
-	.post(studentController.createStudent);
+// Was `router.route('/academic-year/:academicYearID').post(studentController.createStudent)`
+// with NO authController.protect at all ("temporal stud registration")
+// — anyone on the internet could create arbitrary student records,
+// personal data (dob, address, parent contact info) included. Same
+// category of hole as the other open routes fixed in Stage 3
+// (specialty, attendance, /register); missed there because it's a
+// route-chain .post() with no protect() call in it, not a bare
+// router.post() the earlier automated scan was built to catch — found
+// now while building Stage 5's verification script, which creates a
+// real student. Removed rather than protected: this path has no
+// :tokenID segment at all, so protect() would reject every request to
+// it unconditionally, and the frontend's actual "create student" call
+// (studentSlice.js) already always lands on the identical, properly
+// protected route two lines below (apiRequest.js appends the caller's
+// token as a URL suffix automatically, so it never actually hits this
+// bare path in practice) — this was dead, insecure code, not a route
+// anything relies on.
 router
 	.route('/:tokenID')
 	.get(

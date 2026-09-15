@@ -6,7 +6,6 @@ const catchAsync = require('./../../utilities/catchAsync');
 
 exports.createSpecialty = catchAsync(async (req, res, next) => {
 	const { name, department, level } = req.body;
-	console.log({ name, department, level });
 
 	const specialty = await Specialty.create({ name, department, level });
 

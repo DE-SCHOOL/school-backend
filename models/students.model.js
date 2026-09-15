@@ -101,6 +101,20 @@ const studentSchema = new mongoose.Schema({
 		type: String,
 		default: 'n/a',
 	},
+	// Stage 5: links this school-owned enrollment record to a
+	// platform-level Person identity (models/person.model.js). Nullable
+	// and not unique here — a Student is created exactly as before by
+	// school staff with no Person involved at all, and gets linked later
+	// (or never) via a self-service flow. Not unique on this side because
+	// nothing stops it being null for many students simultaneously;
+	// person.controller.js's linkEnrollment is what actually prevents one
+	// Student being claimed by more than one Person.
+	personId: {
+		type: mongoose.Types.ObjectId,
+		ref: 'person',
+		default: null,
+		index: true,
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now(),
@@ -114,7 +128,21 @@ studentSchema.plugin(tenantScope);
 studentSchema.index({ schoolId: 1, matricule: 1 }, { unique: true });
 
 studentSchema.pre(/^find/, function () {
-	this.populate('specialty', 'name');
+	// A populate() here triggers its own separate query against
+	// `specialty` (also tenant-scoped), which needs its own valid tenant
+	// context — one this outer query doesn't have when it was
+	// deliberately run with skipTenantScope (student login/signup/
+	// protect, and Stage 5's cross-school Person lookups, all query
+	// Student before/without any tenant context on purpose). Found as a
+	// real, live bug via Stage 5's verification script: any of those
+	// calls against a real student threw TenantScopeError from inside
+	// this populate, not from the outer query itself. Any other
+	// tenant-scoped model whose pre-find hook populates another
+	// tenant-scoped ref should follow this same guard if it's ever
+	// queried with skipTenantScope too.
+	if (!this.getOptions().skipTenantScope) {
+		this.populate('specialty', 'name');
+	}
 });
 
 studentSchema.pre('save', async function () {

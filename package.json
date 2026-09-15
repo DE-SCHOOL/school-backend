@@ -28,7 +28,9 @@
 		"start:prod": "NODE_ENV=production nodemon server.js",
 		"start:production": "NODE_ENV=production node server.js",
 		"test": "jest --runInBand",
-		"verify:tenant-isolation": "node scripts/verify-tenant-isolation.js"
+		"verify:tenant-isolation": "node scripts/verify-tenant-isolation.js",
+		"verify:stage-4-5": "node scripts/verify-stage-4-5.js",
+		"audit:routes": "node scripts/audit-routes.js"
 	},
 	"engines": {
 		"node": "22.x"

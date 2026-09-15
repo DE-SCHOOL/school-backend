@@ -5,7 +5,11 @@ const questionController = require('./../../controllers/question/question.contro
 
 const router = express.Router();
 
-router.route('/').get(questionController.getAllQuestions);
+// Was `router.route('/').get(questionController.getAllQuestions)` with
+// no protect at all — same dead-duplicate pattern as
+// program.routes.js's identical fix (see its comment for the full
+// reasoning); questionSlice.js's real call always lands on the
+// protected /:tokenID route below instead.
 
 router
 	.route('/:tokenID')

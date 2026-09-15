@@ -38,6 +38,8 @@ jobs:
 
       - run: npm run verify:tenant-isolation
 
+      - run: npm run verify:stage-4-5
+
       # High/critical only, so a new moderate-severity transitive advisory
       # (there will always be one eventually) doesn't block every PR —
       # matches what Stage 2 actually fixed vs. left as a known,
