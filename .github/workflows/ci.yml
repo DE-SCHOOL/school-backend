@@ -19,6 +19,12 @@ jobs:
 
       - run: npm ci
 
+      # Fails only on real errors (undefined references, broken hook
+      # usage, etc.), not on the pre-existing style warnings this
+      # codebase had before linting was introduced — see eslint.config.js
+      # for why that split is deliberate, not a loophole.
+      - run: npm run lint
+
       - run: npm test
 
       # contracts/subscription-billing's own test suite — fully
