@@ -29,7 +29,12 @@ module.exports = (err, req, res, next) => {
 
 	if (process.env.NODE_ENV === 'development') {
 		sendErrorDev(err, statusCode, res);
-	} else if (process.env.NODE_ENV === 'production') {
+	} else {
+		// Anything that isn't explicitly 'development' (production, test,
+		// staging, or NODE_ENV unset entirely) gets the safe, non-leaky
+		// response. Previously this was an `else if (NODE_ENV === 'production')`
+		// with no fallback — any other value silently sent no response at
+		// all, hanging the request forever.
 		const error = { ...err, message };
 
 		if (err.code === 11000) {

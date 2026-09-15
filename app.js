@@ -75,7 +75,11 @@ app.use('/api/v1/timetable', timetableRouter);
 app.use('/api/v1/form-b', formBRouter);
 // app.use('/api/v1/sms', smsRouter);
 
-app.all('*', (req, res, next) => {
+// Express 5's router (path-to-regexp v8) no longer accepts a bare '*'
+// wildcard path. A path-less app.use() as the final handler achieves the
+// same "catch anything not matched above" behavior without depending on
+// wildcard path syntax at all.
+app.use((req, res, next) => {
 	const statusCode = 404;
 	const message = `${req.originalUrl} not found on this server`;
 	next(new ErrorApi(message, statusCode));
@@ -83,7 +87,5 @@ app.all('*', (req, res, next) => {
 
 app.use(errorHandler);
 
-// Notifications Handler
-listenToNewMessageAlert();
-
 module.exports = app;
+module.exports.listenToNewMessageAlert = listenToNewMessageAlert;
