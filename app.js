@@ -103,7 +103,7 @@ app.use((req, res, next) => {
 });
 
 
-//Error handler
+//General error handler
 app.use(errorHandler);
 
 module.exports = app;
