@@ -24,6 +24,6 @@
 		"xlsx-populate": "^1.21.0"
 	},
 	"engines": {
-		"node": "21.x"
+		"node": "22.x"
 	}
 }
