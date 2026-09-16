@@ -72,6 +72,11 @@ app.all('*', (req, res, next) => {
 app.use(errorHandler);
 
 // Notifications Handler
-listenToNewMessageAlert();
+// Wrapped so a Firebase/Firestore setup failure can't crash the whole API.
+try {
+	listenToNewMessageAlert();
+} catch (error) {
+	console.error('Failed to start notification listener:', error.message);
+}
 
 module.exports = app;

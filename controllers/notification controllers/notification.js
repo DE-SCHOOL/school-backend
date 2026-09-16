@@ -38,7 +38,11 @@ const sendNotification = (token, { message, sender, id, gender }) => {
 };
 
 const listenToNewMessageAlert = () => {
-	// Set up Firestore snapshot listener
+	// Set up Firestore snapshot listener.
+	// An onError handler is required here: without one, a Firestore failure
+	// (e.g. an invalid/revoked service account, or blocked network egress in
+	// production) surfaces as an unhandled exception that crashes the whole
+	// Node process, taking down the entire API with it.
 	db.collection('messages').onSnapshot((snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const messageData = change.doc.data();
@@ -92,6 +96,8 @@ const listenToNewMessageAlert = () => {
 					});
 			}
 		});
+	}, (error) => {
+		console.error('Error listening for new messages (notifications disabled):', error.message);
 	});
 };
 
