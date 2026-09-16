@@ -12,6 +12,22 @@ This is the backend only. The staff/student dashboard, the public
 website, and the platform console that pairs with this API live in
 [`school-frontend`](https://github.com/DE-SCHOOL/school-frontend).
 
+## Which setup do I need?
+
+Pick based on what your task actually touches — most issues only need
+one of these, and setting up more than that just wastes your time.
+
+| Your task | What to do |
+|---|---|
+| **Backend only** — an API endpoint, a model, business logic, a migration/verify script | In `school-backend`: `./setup.sh` (below) |
+| **Frontend only** — a component, a page, styling, routing | In `school-frontend`: `./setup-standalone.sh` — no backend, no MongoDB, no Firebase project at all. See [that repo's README](https://github.com/DE-SCHOOL/school-frontend#which-setup-do-i-need). |
+| **Full-stack** — a feature spanning both, or you need to see real data actually flow through a real API | `./setup.sh` in **both** `school-backend` (this repo) and `school-frontend` |
+
+This repo only matters for the first and third rows. If your task is
+frontend-only, you don't need to clone or install anything here — go
+straight to
+[`school-frontend`](https://github.com/DE-SCHOOL/school-frontend#which-setup-do-i-need).
+
 ## What DE-SCHOOL is
 
 Most schools in Cameroon run their administration on paper registers and
